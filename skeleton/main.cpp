@@ -30,6 +30,11 @@ PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
+RenderItem* white_sphere;
+RenderItem* x_sphere;
+RenderItem* y_sphere;
+RenderItem* z_sphere;
+
 
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -55,17 +60,13 @@ void initPhysics(bool interactive)
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 
-	PxTransform* sphere_transform = new physx::PxTransform(PxVec3(0, 0, 0));
-	RenderItem* white_sphere = new RenderItem(CreateShape(PxSphereGeometry(5)), sphere_transform, Vector4{1,1,1,1});
+	RenderItem* white_sphere = new RenderItem(CreateShape(PxSphereGeometry(5)), new physx::PxTransform(PxVec3(0, 0, 0)), Vector4{1,1,1,1});
 
-	PxTransform* x_sphere_transform = new physx::PxTransform(PxVec3(15, 0, 0));
-	RenderItem* x_white_sphere = new RenderItem(CreateShape(PxSphereGeometry(5)), x_sphere_transform, Vector4{ 1,0,0,1 });
+	x_sphere = new RenderItem(CreateShape(PxSphereGeometry(5)), new physx::PxTransform(PxVec3(1, 0, 0)), Vector4{ 1,0,0,1 });
 
-	PxTransform* y_sphere_transform = new physx::PxTransform(PxVec3(0, 15, 0));
-	RenderItem* y_white_sphere = new RenderItem(CreateShape(PxSphereGeometry(5)), y_sphere_transform, Vector4{ 0,1,0,1 });
+	y_sphere = new RenderItem(CreateShape(PxSphereGeometry(5)), new physx::PxTransform(PxVec3(0, 1, 0)), Vector4{ 0,1,0,1 });
 
-	PxTransform* z_sphere_transform = new physx::PxTransform(PxVec3(0, 0, 15));
-	RenderItem* z_white_sphere = new RenderItem(CreateShape(PxSphereGeometry(5)), z_sphere_transform, Vector4{ 0,0,1,1 });
+	z_sphere = new RenderItem(CreateShape(PxSphereGeometry(5)), new physx::PxTransform(PxVec3(0, 0, 1)), Vector4{ 0,0,1,1 });
 	}
 
 
@@ -96,6 +97,11 @@ void cleanupPhysics(bool interactive)
 	transport->release();
 	
 	gFoundation->release();
+
+	white_sphere->release();
+	x_sphere->release();
+	y_sphere->release();
+	z_sphere->release();
 	}
 
 // Function called when a key is pressed
