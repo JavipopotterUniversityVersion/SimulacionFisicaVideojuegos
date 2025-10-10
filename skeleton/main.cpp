@@ -7,6 +7,7 @@
 #include "core.hpp"
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
+#include "Gun.h"
 
 #include <iostream>
 
@@ -30,10 +31,7 @@ PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
-RenderItem* white_sphere;
-RenderItem* x_sphere;
-RenderItem* y_sphere;
-RenderItem* z_sphere;
+Gun* mGun = nullptr;
 
 
 // Initialize physics engine
@@ -60,13 +58,7 @@ void initPhysics(bool interactive)
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 
-	RenderItem* white_sphere = new RenderItem(CreateShape(PxSphereGeometry(5)), new physx::PxTransform(PxVec3(0, 0, 0)), Vector4{1,1,1,1});
-
-	x_sphere = new RenderItem(CreateShape(PxSphereGeometry(5)), new physx::PxTransform(PxVec3(1, 0, 0)), Vector4{ 1,0,0,1 });
-
-	y_sphere = new RenderItem(CreateShape(PxSphereGeometry(5)), new physx::PxTransform(PxVec3(0, 1, 0)), Vector4{ 0,1,0,1 });
-
-	z_sphere = new RenderItem(CreateShape(PxSphereGeometry(5)), new physx::PxTransform(PxVec3(0, 0, 1)), Vector4{ 0,0,1,1 });
+	mGun = new Gun({ 0, 0, 0 }, { 20, 20, 20 }, { 0, -9.8, 0 }, 10.0, 1.0, Particle::EULER, 10.0);
 	}
 
 
@@ -75,6 +67,8 @@ void initPhysics(bool interactive)
 // t: time passed since last call in milliseconds
 void stepPhysics(bool interactive, double t)
 {
+	mGun->Update(t);
+
 	PX_UNUSED(interactive);
 
 	gScene->simulate(t);
@@ -85,6 +79,9 @@ void stepPhysics(bool interactive, double t)
 // Add custom code to the begining of the function
 void cleanupPhysics(bool interactive)
 {
+	delete mGun;
+	mGun = nullptr;
+
 	PX_UNUSED(interactive);
 
 	// Rigid Body ++++++++++++++++++++++++++++++++++++++++++
@@ -97,26 +94,21 @@ void cleanupPhysics(bool interactive)
 	transport->release();
 	
 	gFoundation->release();
-
-	white_sphere->release();
-	x_sphere->release();
-	y_sphere->release();
-	z_sphere->release();
-	}
+}
 
 // Function called when a key is pressed
 void keyPress(unsigned char key, const PxTransform& camera)
 {
 	PX_UNUSED(camera);
 
+	PxVec3 dir = camera.q.rotate({0,0,-1});
 	switch(toupper(key))
 	{
-	//case 'B': break;
-	//case ' ':	break;
-	case ' ':
-	{
+	case 'B':
+		mGun->SetPosition(camera.p + dir * 10);
+		mGun->SetRotation(camera.q);
+		mGun->Shoot();
 		break;
-	}
 	default:
 		break;
 	}
