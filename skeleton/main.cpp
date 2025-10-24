@@ -8,6 +8,9 @@
 #include "RenderUtils.hpp"
 #include "callbacks.hpp"
 #include "Gun.h"
+#include "ParticleSystem.h"
+#include "UniformGeneration.h"
+#include "GaussianGeneration.h"
 
 #include <iostream>
 
@@ -32,6 +35,7 @@ PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
 Gun* mGun = nullptr;
+ParticleSystem* mPSystem = nullptr;
 
 
 // Initialize physics engine
@@ -59,6 +63,11 @@ void initPhysics(bool interactive)
 	gScene = gPhysics->createScene(sceneDesc);
 
 	mGun = new Gun({ 0, 0, 0 }, { 20, 20, 20 }, { 0, -9.8, 0 }, 10.0, 1.0, Particle::EULER, 10.0);
+	std::vector<ParticleGen*> generators;
+	UniformGeneration* gauss = new UniformGeneration({0,0,0}, {1,1,1}, 5, 10, 50);
+	generators.push_back(gauss);
+	mPSystem = new ParticleSystem({ 0, 0, 0 }, generators);
+
 	}
 
 
@@ -68,6 +77,7 @@ void initPhysics(bool interactive)
 void stepPhysics(bool interactive, double t)
 {
 	mGun->Update(t);
+	mPSystem->Update(t);
 
 	PX_UNUSED(interactive);
 
@@ -94,6 +104,8 @@ void cleanupPhysics(bool interactive)
 	transport->release();
 	
 	gFoundation->release();
+
+	delete mPSystem;
 }
 
 // Function called when a key is pressed

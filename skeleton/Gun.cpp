@@ -4,11 +4,11 @@
 
 void
 Gun::Update(double t) {
-	int size = bullets.size();
+	int size = particles.size();
 
 	for (int i = 0; i < size; ++i) {
-		auto aux = bullets.front();
-		bullets.pop();
+		auto aux = particles.front();
+		particles.pop();
 
 		if (aux->hasToDie()) {
 			delete aux;
@@ -16,7 +16,7 @@ Gun::Update(double t) {
 		}
 		else {
 			aux->Integrate(t);
-			bullets.push(aux);
+			particles.push(aux);
 		}
 	}
 }
@@ -24,7 +24,7 @@ Gun::Update(double t) {
 void
 Gun::Shoot() {
 	auto part = new Particle(iPos, simulatedVelocity, acceleration, lifeTime, damping, mode);
-	bullets.push(part);
+	particles.push(part);
 }
 
 double
