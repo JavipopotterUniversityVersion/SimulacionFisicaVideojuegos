@@ -47,6 +47,9 @@ Volcano* volcano;
 ParticleSystem* cynder;
 WindGenerator* wind;
 
+Particle* p1;
+Particle* p2;
+
 
 // Initialize physics engine
 void initPhysics(bool interactive)
@@ -79,6 +82,9 @@ void initPhysics(bool interactive)
 	//FORCE GENERATORS
 	player = new Player(new Particle(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(0, 0, 0), 0.0, 0.0, 1.0, Particle::VERLET, Vector4(0,0,1,1)));
 	std::cout << player;
+
+	p1 = new Particle(Vector3(20, 0, 0), Vector3(0, 0, 0), Vector3(0, 0, 0), 0.0, 0.0, 5.0, Particle::VERLET, Vector4(0, 1, 1, 1));
+	p2 = new Particle(Vector3(-20, 0, 0), Vector3(0, 0, 0), Vector3(0, 0, 0), 0.0, 0.0, 10.0, Particle::VERLET, Vector4(1, 0, 1, 1));
 
 	Floor* floor = new Floor(Vector3(0,-1.5,0));
 	volcano = new Volcano(Vector3(0, 300, 900), player);
@@ -135,6 +141,8 @@ void cleanupPhysics(bool interactive)
 	delete cynder;
 	delete player;
 	delete volcano;
+	delete p1;
+	delete p2;
 }
 
 // Function called when a key is pressed
