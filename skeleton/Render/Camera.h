@@ -53,6 +53,9 @@ private:
 	physx::PxVec3	mDir;
 	int				mMouseX;
 	int				mMouseY;
+public:
+	void setPosition(const physx::PxVec3& pos);
+	void setDirection(const physx::PxVec3& dir);
 };
 
 

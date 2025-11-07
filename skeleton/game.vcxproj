@@ -254,22 +254,33 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="callbacks.cpp" />
+    <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="GaussianGeneration.cpp" />
+    <ClCompile Include="GravityGenerator.cpp" />
+    <ClCompile Include="ParabolicMover.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="UniformGeneration.cpp" />
     <ClCompile Include="Gun.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Particle.cpp" />
-    <ClCompile Include="ParticleGen.cpp" />
     <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="RenderUtils.cpp" />
     <ClCompile Include="Render\Camera.cpp" />
     <ClCompile Include="Render\Render.cpp" />
     <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="Volcano.cpp" />
+    <ClCompile Include="WindGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="callbacks.hpp" />
     <ClInclude Include="core.hpp" />
+    <ClInclude Include="Explosion.h" />
+    <ClInclude Include="Floor.h" />
+    <ClInclude Include="ForceGenerator.h" />
     <ClInclude Include="GaussianGeneration.h" />
+    <ClInclude Include="GravityGenerator.h" />
+    <ClInclude Include="ParabolicMover.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="UniformGeneration.h" />
     <ClInclude Include="Gun.h" />
     <ClInclude Include="Particle.h" />
@@ -278,6 +289,8 @@
     <ClInclude Include="RenderUtils.hpp" />
     <ClInclude Include="Render\Camera.h" />
     <ClInclude Include="Render\Render.h" />
+    <ClInclude Include="Volcano.h" />
+    <ClInclude Include="WindGenerator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

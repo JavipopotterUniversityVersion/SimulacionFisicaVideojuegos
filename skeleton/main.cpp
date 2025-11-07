@@ -11,6 +11,13 @@
 #include "ParticleSystem.h"
 #include "UniformGeneration.h"
 #include "GaussianGeneration.h"
+#include "Explosion.h"
+#include "GravityGenerator.h"
+#include "Floor.h"
+#include "Player.h"
+#include "Volcano.h"
+#include "ParabolicMover.h"
+#include "WindGenerator.h"
 
 #include <iostream>
 
@@ -35,7 +42,10 @@ PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
 
 Gun* mGun = nullptr;
-ParticleSystem* mPSystem = nullptr;
+Player* player;
+Volcano* volcano;
+ParticleSystem* cynder;
+WindGenerator* wind;
 
 
 // Initialize physics engine
@@ -62,22 +72,39 @@ void initPhysics(bool interactive)
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
 
-	mGun = new Gun({ 0, 0, 0 }, { 20, 20, 20 }, { 0, -9.8, 0 }, 10.0, 1.0, Particle::EULER, 10.0);
-	std::vector<ParticleGen*> generators;
-	UniformGeneration* gauss = new UniformGeneration({0,0,0}, {1,1,1}, 5, 10, 50);
-	generators.push_back(gauss);
-	mPSystem = new ParticleSystem({ 0, 0, 0 }, generators);
+	//<---------------AQUI HAGO MOVIDAS--------------------->
 
+	mGun = new Gun({ 0, 0, 0 }, { 20, 20, 20 }, { 0, -9.8, 0 }, 10.0, 1.0, Particle::EULER, 10.0);
+
+	//FORCE GENERATORS
+	player = new Player(new Particle(Vector3(0, 0, 0), Vector3(0, 0, 0), Vector3(0, 0, 0), 0.0, 0.0, 1.0, Particle::VERLET, Vector4(0,0,1,1)));
+	std::cout << player;
+
+	Floor* floor = new Floor(Vector3(0,-1.5,0));
+	volcano = new Volcano(Vector3(0, 300, 900), player);
+
+	std::vector<ParticleGen*> gens;
+	gens.push_back(new UniformGeneration({0,0,0}, {0,0,0}, 2, 1, 0, 200));
+	std::vector<ForceGenerator*> forces;
+	forces.push_back(new GravityGenerator({ 0,0,0 }, 0.3));
+	wind = new WindGenerator({ 0,0,0 }, { 1000,1000,1000 }, { 400,50,5 });
+	forces.push_back(wind);
+	cynder = new ParticleSystem({ 0,0,0 }, gens, forces);
 	}
 
 
-// Function to configure what happens in each step of physics
-// interactive: true if the game is rendering, false if it offline
-// t: time passed since last call in milliseconds
 void stepPhysics(bool interactive, double t)
 {
 	mGun->Update(t);
-	mPSystem->Update(t);
+	player->Update(t);
+
+	volcano->Update(t);
+	cynder->Update(t);
+
+	Vector3 dir = player->getPos() - GetCamera()->getEye();
+	GetCamera()->setPosition(player->getPos() + Vector3(0, 5, -80));
+	GetCamera()->setDirection(dir.getNormalized());
+	cynder->SetPosition(player->getPos() + Vector3(-80,-80,-80));
 
 	PX_UNUSED(interactive);
 
@@ -105,13 +132,22 @@ void cleanupPhysics(bool interactive)
 	
 	gFoundation->release();
 
-	delete mPSystem;
+	delete cynder;
+	delete player;
+	delete volcano;
 }
 
 // Function called when a key is pressed
 void keyPress(unsigned char key, const PxTransform& camera)
 {
 	PX_UNUSED(camera);
+	Vector3 player_dir = Vector3(0, 0, 0);
+	if (toupper(key) == 'I') player_dir += Vector3(0, 0, 1);
+	if (toupper(key) == 'K') player_dir += Vector3(0, 0, -1);
+	if (toupper(key) == 'J') player_dir += Vector3(1, 0, 0);
+	if (toupper(key) == 'L') player_dir += Vector3(-1, 0, 0);
+
+	player->Move(player_dir);
 
 	PxVec3 dir = camera.q.rotate({0,0,-1});
 	switch(toupper(key))
@@ -120,6 +156,9 @@ void keyPress(unsigned char key, const PxTransform& camera)
 		mGun->SetPosition(camera.p + dir * 10);
 		mGun->SetRotation(camera.q);
 		mGun->Shoot();
+		break;
+	case 'F':
+		wind->Toggle();
 		break;
 	default:
 		break;

@@ -11,7 +11,7 @@
 
 using namespace physx;
 
-class Particle{
+class Particle {
 public:
 	enum Mode {
 		EULER,
@@ -20,36 +20,52 @@ public:
 		POST_VERLET
 	};
 
-private:
-	Mode mode;
+protected:
 	RenderItem* item;
-	PxTransform* position;
-	Vector3 velocity;
-	Vector3 acceleration;
-	double mass;
-	double lifeTime;
+	PxTransform* pos;
+
+	Vector3 force;
+	Vector3 v;
+	Vector3 a;
+
+	double invM;
+	double tVida;
 	double damping;
-	Vector3 lastPosition;
+	Vector3 lasPos;
+	Vector4 colour;
+	Mode mode;
+	Vector3 originalPos;
+
+	bool dead = false;
 
 public:
-	Particle() : position(new PxTransform({0, 0, 0})), velocity(0, 0, 0), acceleration(0, 0, 0), mass(1.0), lifeTime(10), damping(1.0), lastPosition(0, 0, 0), mode(EULER){
-		auto geometry = PxSphereGeometry(1.0f);
-		auto shape = CreateShape(geometry);
-		item = new RenderItem(shape, position, Vector4(1,1,1,1));
-	}
-
-	Particle(Vector3 P, Vector3 V, Vector3 A, double T, double d, Mode mass, Vector4 color = {1,1,1,1}) : position(new PxTransform(P)), velocity(V), acceleration(A), mass(1.0), lifeTime(T), damping(d), lastPosition(0, 0, 0), mode(mass) {
+	Particle() : pos(new PxTransform({ 0, 0, 0 })), v(0, 0, 0), a(0, 0, 0), invM(1.0), tVida(10), damping(1.0), lasPos(0, 0, 0), mode(EULER), colour({ 1, 0, 0, 1 }), originalPos(pos->p), force(0, 0, 0) {
 		auto geom = PxSphereGeometry(1.0f);
 		auto shape = CreateShape(geom);
-		item = new RenderItem(shape, position, color);
+		item = new RenderItem(shape, pos, colour);
 	}
 
-	~Particle() { DeregisterRenderItem(item); item = nullptr; position = nullptr; }
+	Particle(Vector3 P, Vector3 V, Vector3 A, double T, double d, double M, Mode mod, Vector4 c = {0,0,0,0}) : pos(new PxTransform(P)), invM(pow(M, -1)), v(V), a(A), tVida(T), damping(d), lasPos(0, 0, 0), mode(mod), colour(c), originalPos(P), force(0, 0, 0) {
+		auto geom = PxSphereGeometry(1.0f);
+		auto shape = CreateShape(geom);
+		item = new RenderItem(shape, pos, colour);
+	}
+
+	~Particle() { item->release(); pos = nullptr; }
 
 
 	void Integrate(double t);
-	inline void setMode(Mode mass) { mode = mass; }
+	inline void setMode(Mode m) { mode = m; }
 
-	bool hasToDie() { return lifeTime <= 0.0; }
+	inline bool hasToDie() { return dead; }
+	inline bool isFarFromOrigin(double distance) { if (((pos->p - originalPos).magnitude() > distance)) { dead = true; return dead; } return false; }
+	inline void addForce(Vector3 const& nForce) { force += nForce; }
+	inline void clearForce() { force = { 0, 0, 0 }; a = { 0, 0, 0 }; }
+	inline void setStatic() { invM = 0; }
+
+	inline Vector3 getPos() { return pos->p; }
+	inline Vector3 getVelocity() { return v; }
+	inline double getMass() { return pow(invM, -1); }
+	inline Vector3 getForce() { return force; }
+	double SetSimulatedVel(double simulatedVel);
 };
-

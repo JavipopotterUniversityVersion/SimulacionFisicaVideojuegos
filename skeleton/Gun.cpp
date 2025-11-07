@@ -23,7 +23,7 @@ Gun::Update(double t) {
 
 void
 Gun::Shoot() {
-	auto part = new Particle(iPos, simulatedVelocity, acceleration, lifeTime, damping, mode);
+	auto part = new Particle(pos, simulatedVelocity, acceleration, lifeTime, damping, 1.0, mode);
 	particles.push(part);
 }
 
