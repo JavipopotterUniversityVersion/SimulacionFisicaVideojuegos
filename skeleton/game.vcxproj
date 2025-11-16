@@ -255,10 +255,12 @@
   <ItemGroup>
     <ClCompile Include="callbacks.cpp" />
     <ClCompile Include="Explosion.cpp" />
+    <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GaussianGeneration.cpp" />
     <ClCompile Include="GravityGenerator.cpp" />
     <ClCompile Include="ParabolicMover.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="UniformGeneration.cpp" />
     <ClCompile Include="Gun.cpp" />
     <ClCompile Include="main.cpp" />
@@ -277,10 +279,12 @@
     <ClInclude Include="Explosion.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="ForceGenerator.h" />
+    <ClInclude Include="GameScene.h" />
     <ClInclude Include="GaussianGeneration.h" />
     <ClInclude Include="GravityGenerator.h" />
     <ClInclude Include="ParabolicMover.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="UniformGeneration.h" />
     <ClInclude Include="Gun.h" />
     <ClInclude Include="Particle.h" />

@@ -22,6 +22,8 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Volcano.cpp" />
     <ClCompile Include="ParabolicMover.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="GameScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -47,6 +49,8 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Volcano.h" />
     <ClInclude Include="ParabolicMover.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="GameScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

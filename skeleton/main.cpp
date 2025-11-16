@@ -18,6 +18,7 @@
 #include "Volcano.h"
 #include "ParabolicMover.h"
 #include "WindGenerator.h"
+#include "Scene.h"
 
 #include <iostream>
 
@@ -40,6 +41,8 @@ PxPvd*                  gPvd        = NULL;
 PxDefaultCpuDispatcher*	gDispatcher = NULL;
 PxScene*				gScene      = NULL;
 ContactReportCallback gContactReportCallback;
+
+Scene* current_scene;
 
 Gun* mGun = nullptr;
 Player* player;
