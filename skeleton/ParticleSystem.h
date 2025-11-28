@@ -21,7 +21,7 @@ public:
 	};
 
 	~ParticleSystem() { 
-		int size = particles.size(); 
+		int size = particles.size();
 		for (int i = 0; i < size; ++i) { 
 			auto aux = particles.front(); 
 			particles.pop_front(); 
