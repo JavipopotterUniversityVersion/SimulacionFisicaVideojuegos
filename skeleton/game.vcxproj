@@ -254,6 +254,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="callbacks.cpp" />
+    <ClCompile Include="Diego.cpp" />
     <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GaussianGeneration.cpp" />
@@ -261,6 +262,8 @@
     <ClCompile Include="ParabolicMover.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Spring.cpp" />
+    <ClCompile Include="SpringScene.cpp" />
     <ClCompile Include="UniformGeneration.cpp" />
     <ClCompile Include="Gun.cpp" />
     <ClCompile Include="main.cpp" />
@@ -276,6 +279,7 @@
   <ItemGroup>
     <ClInclude Include="callbacks.hpp" />
     <ClInclude Include="core.hpp" />
+    <ClInclude Include="Diego.h" />
     <ClInclude Include="Explosion.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="ForceGenerator.h" />
@@ -285,6 +289,8 @@
     <ClInclude Include="ParabolicMover.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Spring.h" />
+    <ClInclude Include="SpringScene.h" />
     <ClInclude Include="UniformGeneration.h" />
     <ClInclude Include="Gun.h" />
     <ClInclude Include="Particle.h" />

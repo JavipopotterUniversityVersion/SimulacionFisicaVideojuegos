@@ -11,11 +11,11 @@ class Particle;
 class GameScene : public Scene
 {
 public:
-	GameScene();
-	virtual void integrate(double t);
-	virtual void init();
-	virtual void keyPress(unsigned char key, const physx::PxTransform& camera) {}
-	virtual ~GameScene();
+	GameScene(physx::PxPhysics* gPhysics, physx::PxMaterial* gMaterial, physx::PxScene* gScene) : Scene(gPhysics, gMaterial, gScene) {};
+	virtual void integrate(double t) override;
+	virtual void init() override;
+	virtual void keyPress(unsigned char key, const physx::PxTransform& camera) override;
+	~GameScene();
 protected:
 	Gun* mGun = nullptr;
 	Player* player;

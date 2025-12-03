@@ -13,14 +13,20 @@ using namespace physx;
 
 class Floor {
 private:
+	PxRigidStatic* rb;
 	RenderItem* item;
 	PxTransform* position;
 
 public:
-	Floor(Vector3 pos) : position(new PxTransform(pos)) {
+	Floor(Vector3 pos, PxScene* gScene) : position(new PxTransform(pos)) {
+		rb = PxGetPhysics().createRigidStatic(*position);
+
 		auto geometry = PxBoxGeometry(99999, 1, 99999);
 		auto shape = CreateShape(geometry);
-		item = new RenderItem(shape, position, Vector4(0, 1, 0, 0));
+
+		rb->attachShape(*shape);
+		gScene->addActor(*rb);
+		item = new RenderItem(shape, rb, Vector4(0, 1, 0, 0));
 	}
 
 	~Floor() { DeregisterRenderItem(item); item = nullptr; position = nullptr; }

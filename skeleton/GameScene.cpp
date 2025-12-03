@@ -16,10 +16,6 @@
 #include "WindGenerator.h"
 #include "Scene.h"
 
-GameScene::GameScene() {
-
-}
-
 void GameScene::integrate(double t) {
 	mGun->Update(t);
 	player->Update(t);
@@ -41,7 +37,7 @@ void GameScene::init() {
 	p1 = new Particle(Vector3(20, 0, 0), Vector3(0, 0, 0), Vector3(0, 0, 0), 0.0, 0.0, 5.0, Particle::VERLET, Vector4(0, 1, 1, 1));
 	p2 = new Particle(Vector3(-20, 0, 0), Vector3(0, 0, 0), Vector3(0, 0, 0), 0.0, 0.0, 10.0, Particle::VERLET, Vector4(1, 0, 1, 1));
 
-	Floor* floor = new Floor(Vector3(0, -1.5, 0));
+	Floor* floor = new Floor(Vector3(0, -1.5, 0), gScene);
 	volcano = new Volcano(Vector3(0, 300, 900), player);
 
 	std::vector<ParticleGen*> gens;
@@ -54,9 +50,35 @@ void GameScene::init() {
 }
 
 void GameScene::keyPress(unsigned char key, const physx::PxTransform& camera) {
+	Vector3 player_dir = Vector3(0, 0, 0);
+	if (toupper(key) == 'I') player_dir += Vector3(0, 0, 1);
+	if (toupper(key) == 'K') player_dir += Vector3(0, 0, -1);
+	if (toupper(key) == 'J') player_dir += Vector3(1, 0, 0);
+	if (toupper(key) == 'L') player_dir += Vector3(-1, 0, 0);
 
+	player->Move(player_dir);
+
+	PxVec3 dir = camera.q.rotate({ 0,0,-1 });
+	switch (toupper(key))
+	{
+	case 'B':
+		mGun->SetPosition(camera.p + dir * 10);
+		mGun->SetRotation(camera.q);
+		mGun->Shoot();
+		break;
+	case 'F':
+		wind->Toggle();
+		break;
+	default:
+		break;
+	}
 }
 
 GameScene::~GameScene() {
-
+	delete cynder;
+	delete player;
+	delete volcano;
+	delete p1;
+	delete p2;
+	delete mGun;
 }
