@@ -2,7 +2,9 @@
 #include <random>
 #include <PxPhysicsAPI.h>
 #include "core.hpp"
+
 class Particle;
+class DynamicParticle;
 
 class ParticleGen
 {
@@ -23,6 +25,7 @@ public:
 		: pos(pos), dur(dur), rate(rate), position_variation(position_variation), speed(speed), gradient_start(g_start), gradient_end(g_end) {};
 
 	virtual std::vector<Particle*> GenerateP() = 0;
+	virtual std::vector<DynamicParticle*> GenerateDP() = 0;
 	std::mt19937 _mt;
 
 	inline Vector3 getPos() { return pos; };

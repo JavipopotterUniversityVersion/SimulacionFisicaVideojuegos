@@ -10,8 +10,8 @@ class RenderItem;
 class Diego
 {
 private:
-    const float MOVE_FORCE = 1000.0f;
-    const float MAX_SPEED = 10.0f;
+    float move_force = 1000.0f;
+    float max_speed = 40.0f;
     const float JUMP_FORCE = 100.0f;
 
     //Rb an TR
@@ -83,11 +83,12 @@ private:
     //Other
     PxScene* scene = nullptr;
 public:
-    Diego(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos);
+    Diego(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos, Vector4 color = {1,1,1,1}, float move_force = 1000.0f);
     ~Diego();
 
     inline PxRigidDynamic* getChest() const { return chest_rb; }
     inline PxRigidDynamic* getPelvis() const { return pelvis_rb; }
+    inline PxRigidDynamic* getHead() const { return head_rb; }
 
     inline Vector3 getPos() { return pelvis_rb->getGlobalPose().p; };
 
@@ -101,4 +102,7 @@ public:
     void jump();
     bool isGrounded();
     bool isWalled();
+
+    void setMaxSpeed(float s) { max_speed = s; }
+    void stop();
 };

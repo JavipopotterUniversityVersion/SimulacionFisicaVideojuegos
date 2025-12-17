@@ -61,25 +61,27 @@ static PxSphericalJoint* connect(PxPhysics* gPhysics,
     return joint;
 }
 
-Diego::Diego(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos)
+Diego::Diego(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos, Vector4 color, float move_force)
 {
+    this->move_force = move_force;
     scene = gScene; 
     PxMaterial* mat = createDefaultMaterial(gPhysics); 
     PxVec3 base = PxVec3(pos.x, pos.y, pos.z);
 
     setupSphere(head_rb, head_tr, gPhysics, gScene, base + PxVec3(0, 2.2f, 0), 0.25f, mat, Vector4(1, 0.7, 0.7, 1), head_item);
-    setupBox(chest_rb, chest_tr, gPhysics, gScene, base + PxVec3(0, 1.5f, 0), PxVec3(0.4f, 0.6f, 0.2f), mat, Vector4(0.7, 1, 0.7, 1), chest_item);
-    setupBox(pelvis_rb, pelvis_tr, gPhysics, gScene, base + PxVec3(0, 0.85f, 0), PxVec3(0.3f, 0.15f, 0.2f), mat, Vector4(0.7, 0.7, 1, 1), pelvis_item);
+    setupBox(chest_rb, chest_tr, gPhysics, gScene, base + PxVec3(0, 1.5f, 0), PxVec3(0.4f, 0.6f, 0.2f), mat, color, chest_item);
+    setupBox(pelvis_rb, pelvis_tr, gPhysics, gScene, base + PxVec3(0, 0.85f, 0), PxVec3(0.3f, 0.15f, 0.2f), mat, color, pelvis_item);
 
-    setupCapsule(left_upper_arm_rb, left_upper_arm_tr, gPhysics, gScene, base + PxVec3(-0.7f, 1.5f, 0), 0.1f, 0.3f, mat, Vector4(0.5, 0.5, 1, 1), left_upper_arm_item);
-    setupCapsule(left_forearm_rb, left_forearm_tr, gPhysics, gScene, base + PxVec3(-1.1f, 1.5f, 0), 0.08f, 0.3f, mat, Vector4(0.4, 0.4, 1, 1), left_forearm_item);
-    setupCapsule(right_upper_arm_rb, right_upper_arm_tr, gPhysics, gScene, base + PxVec3(0.7f, 1.5f, 0), 0.1f, 0.3f, mat, Vector4(0.5, 0.5, 1, 1), right_upper_arm_item);
-    setupCapsule(right_forearm_rb, right_forearm_tr, gPhysics, gScene, base + PxVec3(1.1f, 1.5f, 0), 0.08f, 0.3f, mat, Vector4(0.4, 0.4, 1, 1), right_forearm_item);
+    setupCapsule(left_upper_arm_rb, left_upper_arm_tr, gPhysics, gScene, base + PxVec3(-0.7f, 1.5f, 0), 0.1f, 0.3f, mat, color, left_upper_arm_item);
+    setupCapsule(left_forearm_rb, left_forearm_tr, gPhysics, gScene, base + PxVec3(-1.1f, 1.5f, 0), 0.08f, 0.3f, mat, color, left_forearm_item);
+    setupCapsule(right_upper_arm_rb, right_upper_arm_tr, gPhysics, gScene, base + PxVec3(0.7f, 1.5f, 0), 0.1f, 0.3f, mat, color, right_upper_arm_item);
+    setupCapsule(right_forearm_rb, right_forearm_tr, gPhysics, gScene, base + PxVec3(1.1f, 1.5f, 0), 0.08f, 0.3f, mat, color, right_forearm_item);
 
-    setupBox(left_thigh_rb, left_thigh_tr, gPhysics, gScene, base + PxVec3(-0.4f, 0.5f, 0), PxVec3(0.12f, 0.4f, 0.12f), mat, Vector4(0.3, 1, 1, 1), left_thigh_item);
-    setupBox(left_calf_rb, left_calf_tr, gPhysics, gScene, base + PxVec3(-0.4f, -0.3f, 0), PxVec3(0.1f, 0.4f, 0.1f), mat, Vector4(0.2, 1, 1, 1), left_calf_item);
-    setupBox(right_thigh_rb, right_thigh_tr, gPhysics, gScene, base + PxVec3(0.4f, 0.5f, 0), PxVec3(0.12f, 0.4f, 0.12f), mat, Vector4(0.3, 1, 1, 1), right_thigh_item);
-    setupBox(right_calf_rb, right_calf_tr, gPhysics, gScene, base + PxVec3(0.4f, -0.3f, 0), PxVec3(0.1f, 0.4f, 0.1f), mat, Vector4(0.2, 1, 1, 1), right_calf_item);
+    setupBox(left_thigh_rb, left_thigh_tr, gPhysics, gScene, base + PxVec3(-0.4f, 0.5f, 0), PxVec3(0.12f, 0.4f, 0.12f), mat, color, left_thigh_item);
+    setupBox(left_calf_rb, left_calf_tr, gPhysics, gScene, base + PxVec3(-0.4f, -0.3f, 0), PxVec3(0.1f, 0.4f, 0.1f), mat, color, left_calf_item);
+    setupBox(right_thigh_rb, right_thigh_tr, gPhysics, gScene, base + PxVec3(0.4f, 0.5f, 0), PxVec3(0.12f, 0.4f, 0.12f), mat, color, right_thigh_item);
+    setupBox(right_calf_rb, right_calf_tr, gPhysics, gScene, base + PxVec3(0.4f, -0.3f, 0), PxVec3(0.1f, 0.4f, 0.1f), mat, color, right_calf_item);
+
 
     neck_joint = connect(gPhysics, head_rb, PxTransform(PxVec3(0, -0.25f, 0)), chest_rb, PxTransform(PxVec3(0, 0.6f, 0)));
     spine_joint = connect(gPhysics, chest_rb, PxTransform(PxVec3(0, -0.6f, 0)), pelvis_rb, PxTransform(PxVec3(0, 0.15f, 0)));
@@ -135,8 +137,8 @@ void Diego::move(const physx::PxVec3& dir) {
     physx::PxVec3 horizontalVel = physx::PxVec3(velocity.x, 0, velocity.z);
     float currentSpeed = horizontalVel.magnitude();
 
-    if (currentSpeed < MAX_SPEED) {
-        pelvis_rb->addForce(normalized * MOVE_FORCE, physx::PxForceMode::eACCELERATION);
+    if (currentSpeed < max_speed) {
+        pelvis_rb->addForce(normalized * move_force, physx::PxForceMode::eACCELERATION);
     }
 }
 
@@ -181,4 +183,11 @@ Diego::~Diego()
 
 void Diego::resetPose(Vector3 pos)
 {
+}
+
+void Diego::stop() {
+    pelvis_rb->setLinearVelocity(physx::PxVec3(0));
+    pelvis_rb->setAngularVelocity(physx::PxVec3(0));
+    pelvis_rb->clearForce(physx::PxForceMode::eFORCE);
+    pelvis_rb->clearTorque(physx::PxForceMode::eFORCE);
 }

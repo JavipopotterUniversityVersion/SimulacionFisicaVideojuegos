@@ -29,6 +29,9 @@
     <ClCompile Include="Diego.cpp" />
     <ClCompile Include="RigidCube.cpp" />
     <ClCompile Include="DynamicParticle.cpp" />
+    <ClCompile Include="DynamicParticleCannon.cpp" />
+    <ClCompile Include="Marco.cpp" />
+    <ClCompile Include="Water.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.hpp" />
@@ -61,6 +64,9 @@
     <ClInclude Include="Diego.h" />
     <ClInclude Include="RigidCube.h" />
     <ClInclude Include="DynamicParticle.h" />
+    <ClInclude Include="DynamicParticleCannon.h" />
+    <ClInclude Include="Marco.h" />
+    <ClInclude Include="Water.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Render">

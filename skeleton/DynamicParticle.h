@@ -14,9 +14,13 @@ protected:
     Vector4 color;
     float radius;
 
+    bool dead = false;
+    float life_time;
+    float timer = 0;
+
 public:
-    DynamicParticle(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos, float mass = 1.0f, float radius = 0.5f, Vector4 color = { 1, 0, 0, 1 })
-        : radius(radius), color(color)
+    DynamicParticle(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos, float life_time = 5.0f, float mass = 0.1f, float radius = 0.5f, Vector4 color = { 1, 0, 0, 1 })
+        : radius(radius), color(color), life_time(life_time)
     {
         PxTransform t(pos);
         body = gPhysics->createRigidDynamic(t);
@@ -45,6 +49,8 @@ public:
     Vector3 getVelocity() const {return body->getLinearVelocity();}
 
     void setVelocity(const PxVec3& vel) {body->setLinearVelocity(vel);}
-
+    inline bool hasToDie() { return dead; }
     void clearForces() { body->clearForce(); }
+
+    void Update(float t);
 };

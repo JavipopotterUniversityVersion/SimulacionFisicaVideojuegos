@@ -7,6 +7,8 @@
 #include "ParticleSystem.h"
 #include "RigidCube.h"
 #include "DynamicParticle.h"
+#include "DynamicParticleCannon.h"
+#include "Water.h"
 
 void SpringScene::init() {
 	Particle* p = new Particle();
@@ -20,8 +22,39 @@ void SpringScene::init() {
     new RigidCube(Vector3(140, 0, 50), PxVec3(40, 3, 8), gScene, Vector4(0.5f, 0, 1, 1));
     new RigidCube(Vector3(180, 0, 60), PxVec3(6, 30, 6), gScene, Vector4(0, 1, 1, 1));
 
+
 	diego = new Diego(gPhysics, gScene, Vector3(0,20,0));
 
+    water = new Water(Vector3(0, 0, 100), Vector3(50, 20, 50));
+    water->addTarget(diego->getPelvis());
+
+    DynamicParticleCannon* cannon = new DynamicParticleCannon(Vector3(0, 5, 15), gPhysics, gScene);
+    cannon->setTarget(diego->getHead());
+    cannons.push_back(cannon);
+
+    DynamicParticle* particle = new DynamicParticle(gPhysics, gScene, Vector3(0, 5, 0));
+
+    setupCynder();
+    setupEnemies();
+}
+
+void SpringScene::setupEnemies() {
+    const int numEnemies = 8;
+    const float radius = 100.0f;
+    const float height = 20.0f;
+
+    for (int i = 0; i < numEnemies; ++i) {
+        float angle = PxTwoPi * i / numEnemies;
+        float x = radius * cos(angle);
+        float z = radius * sin(angle);
+        Marco* enemy = new Marco(gPhysics, gScene, Vector3(x, height, z), Vector4(1,0,0,1));
+        enemy->setTarget(diego->getChest());
+        enemies.push_back(enemy);
+        water->addTarget(enemy->getDiego()->getPelvis());
+    }
+}
+
+void SpringScene::setupCynder() {
     std::vector<ParticleGen*> gens;
     gens.push_back(new UniformGeneration({ 0,0,0 }, { 0,0,0 }, 2, 1, 0, 200));
     std::vector<ForceGenerator*> forces;
@@ -32,10 +65,24 @@ void SpringScene::init() {
 }
 
 void SpringScene::integrate(double t) {
-	//mSpring->integrate(t);
+	//mSpring->integrate(t);x
+
     cynder->Update(t);
 	diego->integrate(t);
+    water->integrate(t);
 
+    for (auto cannon : cannons) {
+        cannon->Update(t);
+    }
+
+    for (auto diego : enemies) {
+        diego->integrate(t);
+    }
+
+    updateCamera();
+}
+
+void SpringScene::updateCamera() {
     PxVec3 diego_pos = diego->getPos();
     PxVec3 direction = diego_pos - GetCamera()->getEye();
     direction = direction.getNormalized();

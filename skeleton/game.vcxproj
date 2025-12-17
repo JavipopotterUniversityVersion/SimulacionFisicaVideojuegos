@@ -256,10 +256,12 @@
     <ClCompile Include="callbacks.cpp" />
     <ClCompile Include="Diego.cpp" />
     <ClCompile Include="DynamicParticle.cpp" />
+    <ClCompile Include="DynamicParticleCannon.cpp" />
     <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GaussianGeneration.cpp" />
     <ClCompile Include="GravityGenerator.cpp" />
+    <ClCompile Include="Marco.cpp" />
     <ClCompile Include="ParabolicMover.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RigidCube.cpp" />
@@ -276,6 +278,7 @@
     <ClCompile Include="Render\Render.cpp" />
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="Volcano.cpp" />
+    <ClCompile Include="Water.cpp" />
     <ClCompile Include="WindGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -283,12 +286,14 @@
     <ClInclude Include="core.hpp" />
     <ClInclude Include="Diego.h" />
     <ClInclude Include="DynamicParticle.h" />
+    <ClInclude Include="DynamicParticleCannon.h" />
     <ClInclude Include="Explosion.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="ForceGenerator.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="GaussianGeneration.h" />
     <ClInclude Include="GravityGenerator.h" />
+    <ClInclude Include="Marco.h" />
     <ClInclude Include="ParabolicMover.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RigidCube.h" />
@@ -304,6 +309,7 @@
     <ClInclude Include="Render\Camera.h" />
     <ClInclude Include="Render\Render.h" />
     <ClInclude Include="Volcano.h" />
+    <ClInclude Include="Water.h" />
     <ClInclude Include="WindGenerator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
