@@ -82,18 +82,35 @@ Diego::Diego(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos, Vector4 color, f
     setupBox(right_thigh_rb, right_thigh_tr, gPhysics, gScene, base + PxVec3(0.4f, 0.5f, 0), PxVec3(0.12f, 0.4f, 0.12f), mat, color, right_thigh_item);
     setupBox(right_calf_rb, right_calf_tr, gPhysics, gScene, base + PxVec3(0.4f, -0.3f, 0), PxVec3(0.1f, 0.4f, 0.1f), mat, color, right_calf_item);
 
-
     neck_joint = connect(gPhysics, head_rb, PxTransform(PxVec3(0, -0.25f, 0)), chest_rb, PxTransform(PxVec3(0, 0.6f, 0)));
-    spine_joint = connect(gPhysics, chest_rb, PxTransform(PxVec3(0, -0.6f, 0)), pelvis_rb, PxTransform(PxVec3(0, 0.15f, 0)));
-    left_shoulder_joint = connect(gPhysics, left_upper_arm_rb, PxTransform(PxVec3(0.3f, 0, 0)), chest_rb, PxTransform(PxVec3(-0.4f, 0.4f, 0)));
-    left_elbow_joint = connect(gPhysics, left_forearm_rb, PxTransform(PxVec3(0.3f, 0, 0)), left_upper_arm_rb, PxTransform(PxVec3(-0.3f, 0, 0)));
-    right_shoulder_joint = connect(gPhysics, right_upper_arm_rb, PxTransform(PxVec3(-0.3f, 0, 0)), chest_rb, PxTransform(PxVec3(0.4f, 0.4f, 0)));
-    right_elbow_joint = connect(gPhysics, right_forearm_rb, PxTransform(PxVec3(-0.3f, 0, 0)), right_upper_arm_rb, PxTransform(PxVec3(0.3f, 0, 0)));
-    left_hip_joint = connect(gPhysics, left_thigh_rb, PxTransform(PxVec3(0.0f, 0.4f, 0)), pelvis_rb, PxTransform(PxVec3(-0.3f, -0.15f, 0)));
-    left_knee_joint = connect(gPhysics, left_calf_rb, PxTransform(PxVec3(0.0f, 0.4f, 0)), left_thigh_rb, PxTransform(PxVec3(0.0f, -0.4f, 0)));
-    right_hip_joint = connect(gPhysics, right_thigh_rb, PxTransform(PxVec3(0.0f, 0.4f, 0)), pelvis_rb, PxTransform(PxVec3(0.3f, -0.15f, 0)));
-    right_knee_joint = connect(gPhysics, right_calf_rb, PxTransform(PxVec3(0.0f, 0.4f, 0)), right_thigh_rb, PxTransform(PxVec3(0.0f, -0.4f, 0)));
+    neck_joint->setBreakForce(BREAK_FORCE_HEAD, BREAK_TORQUE);
 
+    spine_joint = connect(gPhysics, chest_rb, PxTransform(PxVec3(0, -0.6f, 0)), pelvis_rb, PxTransform(PxVec3(0, 0.15f, 0)));
+    spine_joint->setBreakForce(BREAK_FORCE_SPINE, BREAK_TORQUE);
+
+    left_shoulder_joint = connect(gPhysics, left_upper_arm_rb, PxTransform(PxVec3(0.3f, 0, 0)), chest_rb, PxTransform(PxVec3(-0.4f, 0.4f, 0)));
+    left_shoulder_joint->setBreakForce(BREAK_FORCE_ARM, BREAK_TORQUE);
+
+    left_elbow_joint = connect(gPhysics, left_forearm_rb, PxTransform(PxVec3(0.3f, 0, 0)), left_upper_arm_rb, PxTransform(PxVec3(-0.3f, 0, 0)));
+    left_elbow_joint->setBreakForce(BREAK_FORCE_ARM, BREAK_TORQUE);
+
+    right_shoulder_joint = connect(gPhysics, right_upper_arm_rb, PxTransform(PxVec3(-0.3f, 0, 0)), chest_rb, PxTransform(PxVec3(0.4f, 0.4f, 0)));
+    right_shoulder_joint->setBreakForce(BREAK_FORCE_ARM, BREAK_TORQUE);
+
+    right_elbow_joint = connect(gPhysics, right_forearm_rb, PxTransform(PxVec3(-0.3f, 0, 0)), right_upper_arm_rb, PxTransform(PxVec3(0.3f, 0, 0)));
+    right_elbow_joint->setBreakForce(BREAK_FORCE_ARM, BREAK_TORQUE);
+
+    left_hip_joint = connect(gPhysics, left_thigh_rb, PxTransform(PxVec3(0.0f, 0.4f, 0)), pelvis_rb, PxTransform(PxVec3(-0.3f, -0.15f, 0)));
+    left_hip_joint->setBreakForce(BREAK_FORCE_LEG, BREAK_TORQUE);
+
+    left_knee_joint = connect(gPhysics, left_calf_rb, PxTransform(PxVec3(0.0f, 0.4f, 0)), left_thigh_rb, PxTransform(PxVec3(0.0f, -0.4f, 0)));
+    left_knee_joint->setBreakForce(BREAK_FORCE_LEG, BREAK_TORQUE);
+
+    right_hip_joint = connect(gPhysics, right_thigh_rb, PxTransform(PxVec3(0.0f, 0.4f, 0)), pelvis_rb, PxTransform(PxVec3(0.3f, -0.15f, 0)));
+    right_hip_joint->setBreakForce(BREAK_FORCE_LEG, BREAK_TORQUE);
+
+    right_knee_joint = connect(gPhysics, right_calf_rb, PxTransform(PxVec3(0.0f, 0.4f, 0)), right_thigh_rb, PxTransform(PxVec3(0.0f, -0.4f, 0)));
+    right_knee_joint->setBreakForce(BREAK_FORCE_LEG, BREAK_TORQUE);
 }
 
 static void applyUprightTorque(physx::PxRigidDynamic* body, float strength = 100.0f, physx::PxVec3 localAxisToAlign = physx::PxVec3(0, 1, 0))
@@ -190,4 +207,17 @@ void Diego::stop() {
     pelvis_rb->setAngularVelocity(physx::PxVec3(0));
     pelvis_rb->clearForce(physx::PxForceMode::eFORCE);
     pelvis_rb->clearTorque(physx::PxForceMode::eFORCE);
+}
+
+void Diego::kill() {
+    left_elbow_joint->release();
+    left_hip_joint->release();
+    right_elbow_joint->release();
+    right_hip_joint->release();
+    neck_joint->release();
+    spine_joint->release();
+    left_shoulder_joint->release();
+    right_shoulder_joint->release();
+    left_elbow_joint->release();
+    right_elbow_joint->release();
 }

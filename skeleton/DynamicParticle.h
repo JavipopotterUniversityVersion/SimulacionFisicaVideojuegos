@@ -19,20 +19,29 @@ protected:
     float timer = 0;
 
 public:
-    DynamicParticle(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos, float life_time = 5.0f, float mass = 0.1f, float radius = 0.5f, Vector4 color = { 1, 0, 0, 1 })
+    DynamicParticle(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos, float life_time = 5.0f, float mass = 0.1f, float radius = 0.5f, Vector4 color = { 1, 0, 0, 1 }, std::string geom = "")
         : radius(radius), color(color), life_time(life_time)
     {
         PxTransform t(pos);
         body = gPhysics->createRigidDynamic(t);
 
-        PxSphereGeometry geometry(radius);
         PxMaterial* mat = gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
 
-        PxShape* shape = body->createShape(geometry, *mat);
+        if (geom == "cube")
+        {
+            PxBoxGeometry geometry = PxBoxGeometry(Vector3(radius, radius, radius));
+            PxShape* shape = body->createShape(geometry, *mat);
+            item = new RenderItem(shape, body, color);
+        }
+        else 
+        {
+            PxSphereGeometry geometry = PxSphereGeometry(radius);
+            PxShape* shape = body->createShape(geometry, *mat);
+            item = new RenderItem(shape, body, color);
+        }
+
         body->setMass(mass);
         gScene->addActor(*body);
-
-        item = new RenderItem(shape, body, color);
     }
 
     ~DynamicParticle() {

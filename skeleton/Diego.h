@@ -10,6 +10,13 @@ class RenderItem;
 class Diego
 {
 private:
+
+    const float BREAK_FORCE_HEAD = 20000.0f;
+    const float BREAK_FORCE_SPINE = 80000.0f;
+    const float BREAK_FORCE_ARM = 30000.0f;
+    const float BREAK_FORCE_LEG = 40000.0f;
+    const float BREAK_TORQUE = 50000;
+
     float move_force = 1000.0f;
     float max_speed = 40.0f;
     const float JUMP_FORCE = 100.0f;
@@ -105,4 +112,6 @@ public:
 
     void setMaxSpeed(float s) { max_speed = s; }
     void stop();
+
+    void kill();
 };

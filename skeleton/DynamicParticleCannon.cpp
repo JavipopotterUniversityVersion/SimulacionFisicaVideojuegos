@@ -35,7 +35,7 @@ void DynamicParticleCannon::Update(double t) {
 }
 
 void DynamicParticleCannon::Shoot() {
-	auto part = new DynamicParticle(gPhysics, gScene, pos);
+	auto part = new DynamicParticle(gPhysics, gScene, pos, 0.1f, 1);
 	part->addForce(rDirection * CANNON_FORCE);
 	particles.push(part);
 }
