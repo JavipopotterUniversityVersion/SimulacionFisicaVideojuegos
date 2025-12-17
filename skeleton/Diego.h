@@ -11,6 +11,7 @@ class Diego
 {
 private:
     const float MOVE_FORCE = 1000.0f;
+    const float MAX_SPEED = 10.0f;
     const float JUMP_FORCE = 100.0f;
 
     //Rb an TR
@@ -88,6 +89,8 @@ public:
     inline PxRigidDynamic* getChest() const { return chest_rb; }
     inline PxRigidDynamic* getPelvis() const { return pelvis_rb; }
 
+    inline Vector3 getPos() { return pelvis_rb->getGlobalPose().p; };
+
     void resetPose(Vector3 pos);
     void addToScene(PxScene* gScene);
     void removeFromScene(PxScene* gScene);
@@ -97,4 +100,5 @@ public:
 
     void jump();
     bool isGrounded();
+    bool isWalled();
 };

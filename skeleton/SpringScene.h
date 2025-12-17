@@ -6,6 +6,7 @@
 
 class ParticleSystem;
 class WindGenerator;
+class RigidCube;
 
 class SpringScene : public Scene
 {
@@ -14,9 +15,13 @@ private:
 
 	Spring* mSpring;
 	Floor* floor;
+	std::vector<RigidCube*> cubes;
 
 	ParticleSystem* cynder;
 	WindGenerator* wind;
+
+	float cameraYaw = 0.0f;
+	const float cameraRotateSpeed = 0.05f;
 public:
 	SpringScene(PxPhysics* gPhysics, PxMaterial* gMaterial, PxScene* gScene) : Scene(gPhysics, gMaterial, gScene) {};
 	virtual void integrate(double t) override;

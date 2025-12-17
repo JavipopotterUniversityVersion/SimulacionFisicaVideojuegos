@@ -255,12 +255,14 @@
   <ItemGroup>
     <ClCompile Include="callbacks.cpp" />
     <ClCompile Include="Diego.cpp" />
+    <ClCompile Include="DynamicParticle.cpp" />
     <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GaussianGeneration.cpp" />
     <ClCompile Include="GravityGenerator.cpp" />
     <ClCompile Include="ParabolicMover.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="RigidCube.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Spring.cpp" />
     <ClCompile Include="SpringScene.cpp" />
@@ -280,6 +282,7 @@
     <ClInclude Include="callbacks.hpp" />
     <ClInclude Include="core.hpp" />
     <ClInclude Include="Diego.h" />
+    <ClInclude Include="DynamicParticle.h" />
     <ClInclude Include="Explosion.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="ForceGenerator.h" />
@@ -288,6 +291,7 @@
     <ClInclude Include="GravityGenerator.h" />
     <ClInclude Include="ParabolicMover.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="RigidCube.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Spring.h" />
     <ClInclude Include="SpringScene.h" />

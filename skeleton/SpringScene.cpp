@@ -5,12 +5,21 @@
 #include "UniformGeneration.h"
 #include "GravityGenerator.h"
 #include "ParticleSystem.h"
+#include "RigidCube.h"
+#include "DynamicParticle.h"
 
 void SpringScene::init() {
 	Particle* p = new Particle();
 	//mSpring = new Spring(Vector3(20,20,0), p, 2.0f, 20.0f);
 
 	floor = new Floor(Vector3(0, 0, 0), gScene);
+
+    new RigidCube(Vector3(30, 0, 30), PxVec3(20, 5, 20), gScene, Vector4(1, 0, 0, 1));
+    new RigidCube(Vector3(60, 0, 40), PxVec3(12, 10, 12), gScene, Vector4(0, 0, 1, 1));
+    new RigidCube(Vector3(100, 0, 25), PxVec3(18, 15, 18), gScene, Vector4(1, 1, 0, 1));
+    new RigidCube(Vector3(140, 0, 50), PxVec3(40, 3, 8), gScene, Vector4(0.5f, 0, 1, 1));
+    new RigidCube(Vector3(180, 0, 60), PxVec3(6, 30, 6), gScene, Vector4(0, 1, 1, 1));
+
 	diego = new Diego(gPhysics, gScene, Vector3(0,20,0));
 
     std::vector<ParticleGen*> gens;
@@ -26,6 +35,24 @@ void SpringScene::integrate(double t) {
 	//mSpring->integrate(t);
     cynder->Update(t);
 	diego->integrate(t);
+
+    PxVec3 diego_pos = diego->getPos();
+    PxVec3 direction = diego_pos - GetCamera()->getEye();
+    direction = direction.getNormalized();
+
+    float distance = 10.0f;
+    float height = 4.0f;
+
+    PxVec3 cam_offset = PxVec3(
+        -sinf(cameraYaw) * distance,
+        height,
+        -cosf(cameraYaw) * distance
+    );
+
+    PxVec3 camPos = diego_pos + cam_offset;
+
+    GetCamera()->setPosition(camPos);
+    GetCamera()->setDirection(direction);
 }
 
 void SpringScene::keyPress(unsigned char key, const physx::PxTransform& camera) {
@@ -50,8 +77,17 @@ void SpringScene::keyPress(unsigned char key, const physx::PxTransform& camera) 
         diego->move(right);
     else if (key == ' ')
         diego->jump();
+    else if (key == 'l')
+        cameraYaw -= cameraRotateSpeed;
+    else if (key == 'j')
+        cameraYaw += cameraRotateSpeed;
 }
 
 SpringScene::~SpringScene() {
 	delete diego;
+    delete floor;
+
+    for (auto cube : cubes) {
+        delete cube;
+    }
 }
