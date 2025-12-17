@@ -4,12 +4,19 @@
 #include "Diego.h"
 #include "Floor.h"
 
+class ParticleSystem;
+class WindGenerator;
+
 class SpringScene : public Scene
 {
 private:
-	Spring* mSpring;
 	Diego* diego;
+
+	Spring* mSpring;
 	Floor* floor;
+
+	ParticleSystem* cynder;
+	WindGenerator* wind;
 public:
 	SpringScene(PxPhysics* gPhysics, PxMaterial* gMaterial, PxScene* gScene) : Scene(gPhysics, gMaterial, gScene) {};
 	virtual void integrate(double t) override;

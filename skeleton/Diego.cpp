@@ -1,15 +1,187 @@
 #include "Diego.h"
-#include <PxPhysicsAPI.h>
 #include "RenderUtils.hpp"
 
-Diego::Diego(physx::PxPhysics* gPhysics, physx::PxScene* gScene, Vector3 pos) {
-	diego_tr = new physx::PxTransform(pos);
-	rb = gPhysics->createRigidDynamic(*diego_tr);
+using namespace physx;
 
-	auto geometry = physx::PxBoxGeometry(5, 5, 5);
-	auto shape = CreateShape(geometry);
+static PxMaterial* createDefaultMaterial(PxPhysics* gPhysics) {
+    return gPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+}
 
-	rb->attachShape(*shape);
-	gScene->addActor(*rb);
-	item = new RenderItem(shape, rb, Vector4(1, 0, 0, 0));
+static void setupCapsule(PxRigidDynamic*& body, PxTransform*& tr, PxPhysics* gPhysics, PxScene* gScene,
+    const PxVec3& position, float radius, float halfHeight, PxMaterial* mat, Vector4 color, RenderItem*& renderItem)
+{
+    tr = new PxTransform(position);
+    body = gPhysics->createRigidDynamic(*tr);
+    body->createShape(PxCapsuleGeometry(radius, halfHeight), *mat);
+    body->setMass(1.0f);
+    gScene->addActor(*body);
+    
+    PxShape* shape = nullptr;
+    body->getShapes(&shape, 1);
+    renderItem = new RenderItem(shape, body, color);
+}
+
+static void setupBox(PxRigidDynamic*& body, PxTransform*& tr, PxPhysics* gPhysics, PxScene* gScene,
+    const PxVec3& position, const PxVec3& halfExtents, PxMaterial* mat, Vector4 color, RenderItem*& renderItem)
+{
+    tr = new PxTransform(position);
+    body = gPhysics->createRigidDynamic(*tr);
+    body->createShape(PxBoxGeometry(halfExtents), *mat);
+    body->setMass(2.0f);
+    gScene->addActor(*body);
+
+    PxShape* shape = nullptr;
+    body->getShapes(&shape, 1);
+    renderItem = new RenderItem(shape, body, color);
+}
+
+static void setupSphere(PxRigidDynamic*& body, PxTransform*& tr, PxPhysics* gPhysics, PxScene* gScene,
+    const PxVec3& position, float radius, PxMaterial* mat, Vector4 color, RenderItem*& renderItem)
+{
+    tr = new PxTransform(position);
+    body = gPhysics->createRigidDynamic(*tr);
+    body->createShape(PxSphereGeometry(radius), *mat);
+    body->setMass(1.0f);
+    gScene->addActor(*body);
+
+    PxShape* shape = nullptr;
+    body->getShapes(&shape, 1);
+    renderItem = new RenderItem(shape, body, color);
+}
+
+static PxSphericalJoint* connect(PxPhysics* gPhysics,
+    PxRigidActor* a, const PxTransform& localA,
+    PxRigidActor* b, const PxTransform& localB,
+    float coneAngle = PxPi / 4)
+{
+    PxSphericalJoint* joint = PxSphericalJointCreate(*gPhysics, a, localA, b, localB);
+    joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+    joint->setLimitCone(PxJointLimitCone(coneAngle, coneAngle, 0.01f));
+    joint->setSphericalJointFlag(PxSphericalJointFlag::eLIMIT_ENABLED, true);
+    return joint;
+}
+
+Diego::Diego(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos)
+{
+    scene = gScene;
+    PxMaterial* mat = createDefaultMaterial(gPhysics);
+    PxVec3 base = PxVec3(pos.x, pos.y, pos.z);
+
+    // Body parts
+    setupSphere(head_rb, head_tr, gPhysics, gScene, base + PxVec3(0, 2.0f, 0), 0.25f, mat, Vector4(1, 0.7, 0.7, 1), head_item);
+
+    setupBox(chest_rb, chest_tr, gPhysics, gScene, base + PxVec3(0, 1.5f, 0), PxVec3(0.4f, 0.6f, 0.2f), mat, Vector4(0.7, 1, 0.7, 1), chest_item);
+
+    setupBox(pelvis_rb, pelvis_tr, gPhysics, gScene, base + PxVec3(0, 0.8f, 0), PxVec3(0.3f, 0.4f, 0.2f), mat, Vector4(0.7, 0.7, 1, 1), pelvis_item);
+
+    setupCapsule(left_upper_arm_rb, left_upper_arm_tr, gPhysics, gScene, base + PxVec3(-0.7f, 1.5f, 0), 0.1f, 0.3f, mat, Vector4(0.5, 0.5, 1, 1), left_upper_arm_item);
+    setupCapsule(left_forearm_rb, left_forearm_tr, gPhysics, gScene, base + PxVec3(-1.1f, 1.5f, 0), 0.08f, 0.3f, mat, Vector4(0.4, 0.4, 1, 1), left_forearm_item);
+
+    setupCapsule(right_upper_arm_rb, right_upper_arm_tr, gPhysics, gScene, base + PxVec3(0.7f, 1.5f, 0), 0.1f, 0.3f, mat, Vector4(0.5, 0.5, 1, 1), right_upper_arm_item);
+    setupCapsule(right_forearm_rb, right_forearm_tr, gPhysics, gScene, base + PxVec3(1.1f, 1.5f, 0), 0.08f, 0.3f, mat, Vector4(0.4, 0.4, 1, 1), right_forearm_item);
+
+    /*setupCapsule(left_thigh_rb, left_thigh_tr, gPhysics, gScene, base + PxVec3(-0.6f, 0.8f, 0), 0.12f, 0.4f, mat, Vector4(0.3, 1, 1, 1), left_thigh_item);
+    setupCapsule(left_calf_rb, left_calf_tr, gPhysics, gScene, base + PxVec3(-1.2f, 0.8f, 0), 0.1f, 0.4f, mat, Vector4(0.2, 1, 1, 1), left_calf_item);
+
+    setupCapsule(right_thigh_rb, right_thigh_tr, gPhysics, gScene, base + PxVec3(0.6f, 0.8f, 0), 0.12f, 0.4f, mat, Vector4(0.3, 1, 1, 1), right_thigh_item);
+    setupCapsule(right_calf_rb, right_calf_tr, gPhysics, gScene, base + PxVec3(1.2f, 0.8f, 0), 0.1f, 0.4f, mat, Vector4(0.2, 1, 1, 1), right_calf_item);*/
+
+    // Joints
+    neck_joint = connect(gPhysics, head_rb, PxTransform(PxVec3(0, -0.25f, 0)), chest_rb, PxTransform(PxVec3(0, 0.6f, 0)));
+    spine_joint = connect(gPhysics, chest_rb, PxTransform(PxVec3(0, -0.6f, 0)), pelvis_rb, PxTransform(PxVec3(0, 0.4f, 0)));
+
+    left_shoulder_joint = connect(gPhysics, left_upper_arm_rb, PxTransform(PxVec3(0.3f, 0, 0)), chest_rb, PxTransform(PxVec3(-0.4f, 0.4f, 0)));
+    left_elbow_joint = connect(gPhysics, left_forearm_rb, PxTransform(PxVec3(0.3f, 0, 0)), left_upper_arm_rb, PxTransform(PxVec3(-0.3f, 0, 0)));
+
+    right_shoulder_joint = connect(gPhysics, right_upper_arm_rb, PxTransform(PxVec3(-0.3f, 0, 0)), chest_rb, PxTransform(PxVec3(0.4f, 0.4f, 0)));
+    right_elbow_joint = connect(gPhysics, right_forearm_rb, PxTransform(PxVec3(-0.3f, 0, 0)), right_upper_arm_rb, PxTransform(PxVec3(0.3f, 0, 0)));
+
+    /*left_hip_joint = connect(gPhysics, left_thigh_rb, PxTransform(PxVec3(0.4f, 0, 0)), pelvis_rb, PxTransform(PxVec3(-0.3f, 0, 0)));
+    left_knee_joint = connect(gPhysics, left_calf_rb, PxTransform(PxVec3(0.4f, 0, 0)), left_thigh_rb, PxTransform(PxVec3(-0.4f, 0, 0)));
+
+    right_hip_joint = connect(gPhysics, right_thigh_rb, PxTransform(PxVec3(-0.4f, 0, 0)), pelvis_rb, PxTransform(PxVec3(0.3f, 0, 0)));
+    right_knee_joint = connect(gPhysics, right_calf_rb, PxTransform(PxVec3(-0.4f, 0, 0)), right_thigh_rb, PxTransform(PxVec3(0.4f, 0, 0)));*/
+
+}
+
+static void applyUprightTorque(physx::PxRigidDynamic* body, float strength = 100.0f, physx::PxVec3 localAxisToAlign = physx::PxVec3(0, 1, 0))
+{
+    if (!body) return;
+
+    physx::PxQuat current = body->getGlobalPose().q;
+
+    physx::PxVec3 localDir = current.rotate(localAxisToAlign);
+
+    physx::PxVec3 targetDir = physx::PxVec3(0, 1, 0);
+
+    physx::PxVec3 axis = localDir.cross(targetDir);
+    
+    float dot = localDir.dot(targetDir);
+    float angle = acosf(physx::PxClamp(dot, -1.0f, 1.0f));
+
+    if (angle < 1e-4f || axis.normalize() < 1e-4f)
+        return;
+
+    physx::PxVec3 torque = axis * angle * strength;
+    body->addTorque(torque, physx::PxForceMode::eACCELERATION);
+}
+
+
+void Diego::integrate(double delta) {
+    applyUprightTorque(pelvis_rb);
+    applyUprightTorque(chest_rb);
+    applyUprightTorque(head_rb);
+
+    //applyUprightTorque(left_thigh_rb, 1000.0f, physx::PxVec3(0, -1, 0));
+    //applyUprightTorque(right_thigh_rb, 1000.0f, physx::PxVec3(0, -1, 0));
+    //applyUprightTorque(left_calf_rb, 1000.0f, physx::PxVec3(0, -1, 0));
+    //applyUprightTorque(right_calf_rb, 1000.0f, physx::PxVec3(0, -1, 0));
+
+    physx::PxVec3 pelvisPos = pelvis_rb->getGlobalPose().p;
+
+    // Posición deseada de la cámara (detrás y arriba)
+    physx::PxVec3 camOffset = physx::PxVec3(-4.0f, 3.0f, -6.0f);
+
+    physx::PxVec3 camPos = pelvisPos + camOffset;
+    physx::PxVec3 camTarget = pelvisPos;
+
+    physx::PxVec3 direction = (pelvisPos - camPos).getNormalized();
+
+    GetCamera()->setPosition(camPos);
+    GetCamera()->setDirection(direction);
+}
+
+void Diego::move(const physx::PxVec3& dir) {
+    physx::PxVec3 normalized = dir.getNormalized();
+    pelvis_rb->addForce(normalized * MOVE_FORCE, physx::PxForceMode::eACCELERATION);
+}
+
+bool Diego::isGrounded()
+{
+    physx::PxVec3 origin = pelvis_rb->getGlobalPose().p;
+    physx::PxVec3 direction = physx::PxVec3(0, -1, 0);
+    float maxDistance = 0.6f;
+    physx::PxRaycastBuffer hit;
+
+    bool hasHit = scene->raycast(origin, direction, maxDistance, hit,
+        physx::PxHitFlag::eDEFAULT,
+        physx::PxQueryFilterData(physx::PxQueryFlag::eSTATIC | physx::PxQueryFlag::eDYNAMIC));
+
+    return hasHit;
+}
+
+
+void Diego::jump()
+{
+    if (!isGrounded()) return;
+    pelvis_rb->addForce(physx::PxVec3(0, JUMP_FORCE, 0), physx::PxForceMode::eIMPULSE);
+}
+
+
+Diego::~Diego()
+{
+}
+
+void Diego::resetPose(Vector3 pos)
+{
 }

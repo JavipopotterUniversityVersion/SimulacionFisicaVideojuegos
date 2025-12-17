@@ -1,6 +1,7 @@
 #include <ctype.h>
 
 #include <PxPhysicsAPI.h>
+#include <PxPhysics.h>
 
 #include <vector>
 
@@ -70,6 +71,9 @@ void initPhysics(bool interactive)
 	sceneDesc.filterShader = contactReportFilterShader;
 	sceneDesc.simulationEventCallback = &gContactReportCallback;
 	gScene = gPhysics->createScene(sceneDesc);
+
+	gScene->setVisualizationParameter(PxVisualizationParameter::eJOINT_LOCAL_FRAMES, 1.0f);
+	gScene->setVisualizationParameter(PxVisualizationParameter::eJOINT_LIMITS, 1.0f);
 
 	//current_scene = new GameScene();
 	current_scene = new SpringScene(gPhysics, gMaterial, gScene);
