@@ -3,6 +3,7 @@
 #include <PxPhysicsAPI.h>
 #include "core.hpp"
 class Particle;
+class DynamicParticle;
 
 class ForceGenerator
 {
@@ -14,6 +15,8 @@ public:
 	~ForceGenerator() {}
 
 	virtual void ApplyForce(const std::list<Particle*>& particles, double t) = 0;
+	virtual void ApplyForce(const std::list<DynamicParticle*>& particles, double t) = 0;
+
 	inline Vector3 getPos() { return pos; };
 	inline void setPos(Vector3 new_pos) { pos = new_pos; }
 

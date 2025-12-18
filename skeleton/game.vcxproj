@@ -257,6 +257,7 @@
     <ClCompile Include="Diego.cpp" />
     <ClCompile Include="DynamicParticle.cpp" />
     <ClCompile Include="DynamicParticleCannon.cpp" />
+    <ClCompile Include="DynamicParticleSystem.cpp" />
     <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GaussianGeneration.cpp" />
@@ -287,6 +288,7 @@
     <ClInclude Include="Diego.h" />
     <ClInclude Include="DynamicParticle.h" />
     <ClInclude Include="DynamicParticleCannon.h" />
+    <ClInclude Include="DynamicParticleSystem.h" />
     <ClInclude Include="Explosion.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="ForceGenerator.h" />
