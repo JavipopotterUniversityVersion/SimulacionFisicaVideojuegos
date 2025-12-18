@@ -1,0 +1,102 @@
+a) Historia:
+-Nuestro protagonista de nombre "Diego" se despierta tranquilamente como cualquier otro día, pero su casa ha desaparecido y
+a su alrededor han aparecido un montón de estructuras raras y fenómenos naturales imposibles como un bloque de agua gigante o un generador
+de partículas que genera materia de la nada. No solo eso si no que también hay un montón de tíos raros de nombre "Marco" que le siguen, no le hacen
+nada pero le siguen y eso es un poco incómodo porque no los conoce. Diego pronto descubre que pulsando la tecla "c" activa un cañón encima de su cabeza
+que dispara partículas a los marcos. Su objetivo es acostumbrarse a su nueva vida y pasearse tranquilamente por su nueva realidad, preferentemente sin perder la cabeza (literalmente).
+
+
+b) Diagrama de clases:
+
+-Diego: Muñeco compuesto de varios sólidos dinámicos unidos por joints para formar un cuerpo humanoide. Sus piezas ejercen fuerza constante de rotación para mantenerlo en pie
+y tiene parámetros para moverlo y demás cosas.
+
+-Marco: Clase que posee un Diego y lo controla para perseguir un objetivo asignado.
+
+-ParticleSystem: Clase de sistema de partículas que no interactúa con los sólidos.
+
+-DynamicParticle: Partícula dinámica que interactúa con otros sólidos.
+
+-DynamicParticleSystem: Clase de sistema de partículas de tipo DynamicParticle. Usa los mismos generadores de fuerzas y generadores de partículas que ParticleSystem pero
+estos tienen funciones sobrecargadas para DynamicParticle.
+
+-DynamicParticleCannon: Cañón de DynamicParticle que apunta a un objetivo (target) y dispara con cierto rate.
+
+
+c) Ecuaciones usadas:
+
+#Viento
+->Ecuación: 𝐹𝑣⃗⃗⃗ = 𝑘1 (𝑣 𝑣 − 𝑣 ) + 𝑘2‖𝑣 𝑣 − 𝑣 ‖(𝑣 𝑣 − 𝑣 )
+->Usado en: WindGenerator
+
+#Explosión
+->Ecuación:
++ Vector3 res = pos1->getPos() - pos2;
++ res *= (force / pow(r, 2));
++ res *= pow(exp(1.0), -(time / time_constant));
+->Usado en: Explosion
+
+#Flotación
+->Ecuación:
++ if (h - h0 > _height * 0.5f) immersed = 0.0f;
++ else if (h0 - h > _height * 0.5f) immersed = 1.0f;
++ else immersed = (h0 - h) / _height + 0.5f;
+->Usado en: Water
+
+d) Efectos usados:
+
+-Ceniza: Se encuentra flotando en la escena
+
+e) Guía sobre los requisitos:
+-Dos generadores de partículas distintos:
++ Uniform Generation: SpringScene.cpp línea 63
++ Gaussian Generation: SpringScene.cpp línea 65
+
+- Gestión de creación y destrucción de instancias:
++ Creación en las escenas que derivan de Scene (SpringScene y GameScene)
++ Destrucción de partículas en las clases:
+-> ParticleSystem línea 14
+-> DynamicParticleCannon línea 24
+
+- Destrucción de todos los elementos al salir de la escena:
++ Destructiores de las escenas que heredan de Scene (GameScene y SpringScene), la escena que se usa se borra en main.cpp línea 106
+
+- Partículas con distinta masa:
++ DynamicParticleCannon línea 49-51, se asigna a las partículas una masa aleatoria definida en un rango
+
+- Un sistema de sólidos rígidos:
++ DynamicParticleSystem, Diego, RigidCube y DynamicParticleCannon crean sólidos
+
+- Sólidos rígidos con distinto tamaño, forma, masa y tensor de inercia:
++ DynamicParticleSystem, Diego, RigidCube y DynamicParticleCannon crean sólidos con distintas propiedades.
+
+- Dos generadores de fuerzas diferentes:
++ WindGenerator: SpringScene.cpp línea 65
++ Explosion: SpringScene.cpp línea 66
+
+- Interacción con el usuario a través del teclado y/o ratón:
++ SpringScene.cpp línea 149 con la función keypress
+
+- Un ejemplo de muelle o de flotación:
++ Water: SrpingScene.cpp línea 31
+
+
+f) Manual de usuario:
+Teclas:
++ t, f, g, h: Mueve al jugador en las 4 direcciones del plano xz
++ l, j: Rota la cámara alrededor del jugador, la rotación es alrededor del eje y.
++ barra espaciadora: Hace saltar al jugador.
++ k: Activa una explosión que se puede apreciar sobre el sistema de partículas de sólidos dinámicos de la escena (las partículas rojas).
++ i: Activa/Desactiva la fuerza de viento que afecta a el sistema de partículas de sólidos dinámicos de la escena (las partículas rojas).
++ v: Activa/Desactiva las fuerzas que mantienen al jugador en pie.
++ c: Activa/Desactiva el cañón de partículas sólidas que se sitúa encima de la cabeza del jugador.
+
+g) Experimentos extra:
+
++ Diego: Creado un muñeco de trapo basado en sólidos dinámicos unidos por joints, tiene funciones para moverse, hacerse el muerto o romper todos sus joints.
+Se mantiene en pie gracias a una fuerza de rotación constante aplicada sobre sus piernas, pelvis, torso y cabeza. Esto le da unefecto similar a un "tentetieso"
+y en lo personal lo considero bastante gracioso.
+
++ Water: Área que ejerce un fuerza de flotación en todos los sólidos dinámicos que tenga asignados. Afecta a Diego y Marco, pero puede afectar a cualquier sólido deseado.
+
++ DynamicParticleCannon: Cañon de partículas sólidas que dispara a un objetivo dado. En el proyecto está implementado para disparar siempre al enemigo más cercano.
