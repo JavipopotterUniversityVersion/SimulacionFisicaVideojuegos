@@ -61,7 +61,7 @@ static PxSphericalJoint* connect(PxPhysics* gPhysics,
     return joint;
 }
 
-Diego::Diego(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos, Vector4 color, float move_force)
+Diego::Diego(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos, Vector4 color, float move_force, float break_factor)
 {
     this->move_force = move_force;
     scene = gScene; 
@@ -83,34 +83,34 @@ Diego::Diego(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos, Vector4 color, f
     setupBox(right_calf_rb, right_calf_tr, gPhysics, gScene, base + PxVec3(0.4f, -0.3f, 0), PxVec3(0.1f, 0.4f, 0.1f), mat, color, right_calf_item);
 
     neck_joint = connect(gPhysics, head_rb, PxTransform(PxVec3(0, -0.25f, 0)), chest_rb, PxTransform(PxVec3(0, 0.6f, 0)));
-    neck_joint->setBreakForce(BREAK_FORCE_HEAD, BREAK_TORQUE);
+    neck_joint->setBreakForce(BREAK_FORCE_HEAD * break_factor, BREAK_TORQUE * break_factor);
 
     spine_joint = connect(gPhysics, chest_rb, PxTransform(PxVec3(0, -0.6f, 0)), pelvis_rb, PxTransform(PxVec3(0, 0.15f, 0)));
-    spine_joint->setBreakForce(BREAK_FORCE_SPINE, BREAK_TORQUE);
+    spine_joint->setBreakForce(BREAK_FORCE_SPINE * break_factor, BREAK_TORQUE * break_factor);
 
     left_shoulder_joint = connect(gPhysics, left_upper_arm_rb, PxTransform(PxVec3(0.3f, 0, 0)), chest_rb, PxTransform(PxVec3(-0.4f, 0.4f, 0)));
-    left_shoulder_joint->setBreakForce(BREAK_FORCE_ARM, BREAK_TORQUE);
+    left_shoulder_joint->setBreakForce(BREAK_FORCE_ARM * break_factor, BREAK_TORQUE * break_factor);
 
     left_elbow_joint = connect(gPhysics, left_forearm_rb, PxTransform(PxVec3(0.3f, 0, 0)), left_upper_arm_rb, PxTransform(PxVec3(-0.3f, 0, 0)));
-    left_elbow_joint->setBreakForce(BREAK_FORCE_ARM, BREAK_TORQUE);
+    left_elbow_joint->setBreakForce(BREAK_FORCE_ARM * break_factor, BREAK_TORQUE * break_factor);
 
     right_shoulder_joint = connect(gPhysics, right_upper_arm_rb, PxTransform(PxVec3(-0.3f, 0, 0)), chest_rb, PxTransform(PxVec3(0.4f, 0.4f, 0)));
-    right_shoulder_joint->setBreakForce(BREAK_FORCE_ARM, BREAK_TORQUE);
+    right_shoulder_joint->setBreakForce(BREAK_FORCE_ARM * break_factor, BREAK_TORQUE * break_factor);
 
     right_elbow_joint = connect(gPhysics, right_forearm_rb, PxTransform(PxVec3(-0.3f, 0, 0)), right_upper_arm_rb, PxTransform(PxVec3(0.3f, 0, 0)));
-    right_elbow_joint->setBreakForce(BREAK_FORCE_ARM, BREAK_TORQUE);
+    right_elbow_joint->setBreakForce(BREAK_FORCE_ARM * break_factor, BREAK_TORQUE * break_factor);
 
     left_hip_joint = connect(gPhysics, left_thigh_rb, PxTransform(PxVec3(0.0f, 0.4f, 0)), pelvis_rb, PxTransform(PxVec3(-0.3f, -0.15f, 0)));
-    left_hip_joint->setBreakForce(BREAK_FORCE_LEG, BREAK_TORQUE);
+    left_hip_joint->setBreakForce(BREAK_FORCE_LEG * break_factor, BREAK_TORQUE * break_factor);
 
     left_knee_joint = connect(gPhysics, left_calf_rb, PxTransform(PxVec3(0.0f, 0.4f, 0)), left_thigh_rb, PxTransform(PxVec3(0.0f, -0.4f, 0)));
-    left_knee_joint->setBreakForce(BREAK_FORCE_LEG, BREAK_TORQUE);
+    left_knee_joint->setBreakForce(BREAK_FORCE_LEG * break_factor, BREAK_TORQUE * break_factor);
 
     right_hip_joint = connect(gPhysics, right_thigh_rb, PxTransform(PxVec3(0.0f, 0.4f, 0)), pelvis_rb, PxTransform(PxVec3(0.3f, -0.15f, 0)));
-    right_hip_joint->setBreakForce(BREAK_FORCE_LEG, BREAK_TORQUE);
+    right_hip_joint->setBreakForce(BREAK_FORCE_LEG * break_factor, BREAK_TORQUE * break_factor);
 
     right_knee_joint = connect(gPhysics, right_calf_rb, PxTransform(PxVec3(0.0f, 0.4f, 0)), right_thigh_rb, PxTransform(PxVec3(0.0f, -0.4f, 0)));
-    right_knee_joint->setBreakForce(BREAK_FORCE_LEG, BREAK_TORQUE);
+    right_knee_joint->setBreakForce(BREAK_FORCE_LEG * break_factor, BREAK_TORQUE * break_factor);
 }
 
 static void applyUprightTorque(physx::PxRigidDynamic* body, float strength = 100.0f, physx::PxVec3 localAxisToAlign = physx::PxVec3(0, 1, 0))
@@ -137,6 +137,7 @@ static void applyUprightTorque(physx::PxRigidDynamic* body, float strength = 100
 
 
 void Diego::integrate(double delta) {
+    if (play_dead) return;
     applyUprightTorque(pelvis_rb, 500.0f);
     applyUprightTorque(chest_rb, 500.0f);
     applyUprightTorque(head_rb, 500.0f);

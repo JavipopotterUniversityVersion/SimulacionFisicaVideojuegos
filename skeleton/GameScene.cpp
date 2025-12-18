@@ -41,7 +41,7 @@ void GameScene::init() {
 	volcano = new Volcano(Vector3(0, 300, 900), player);
 
 	std::vector<ParticleGen*> gens;
-	gens.push_back(new UniformGeneration({ 0,0,0 }, { 0,0,0 }, 2, 1, 0, 200));
+	gens.push_back(new UniformGeneration({ 0,0,0 }, 2, 1, 0, 200));
 	std::vector<ForceGenerator*> forces;
 	forces.push_back(new GravityGenerator({ 0,0,0 }, 0.3));
 	wind = new WindGenerator({ 0,0,0 }, { 1000,1000,1000 }, { 400,50,5 });

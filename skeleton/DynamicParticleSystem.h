@@ -17,7 +17,8 @@ class DynamicParticleSystem
 	physx::PxPhysics* gPhysics;
 	physx::PxScene* gScene;
 public:
-	DynamicParticleSystem(Vector3 P, std::vector<ParticleGen*> particle_generators, std::vector<ForceGenerator*> force_generators) : pos(P), particle_generators(particle_generators), force_generators(force_generators) {
+	DynamicParticleSystem(Vector3 P, std::vector<ParticleGen*> particle_generators, std::vector<ForceGenerator*> force_generators, physx::PxPhysics* gPhysics, physx::PxScene* gScene) :
+		pos(P), particle_generators(particle_generators), force_generators(force_generators), gPhysics(gPhysics), gScene(gScene) {
 		particles = std::list<DynamicParticle*>();
 	};
 

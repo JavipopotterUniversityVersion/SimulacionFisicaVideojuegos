@@ -16,6 +16,7 @@ class DynamicParticleCannon
 
 	float timer = 0;
 	const float SHOOT_RATE = 0.8f;
+	bool enabled = true;
 public:
 	DynamicParticleCannon(Vector3 P, PxPhysics* gPhysics, PxScene* gScene) : pos(P), gScene(gScene), gPhysics(gPhysics) {
 		particles = std::queue<DynamicParticle*>();
@@ -30,5 +31,6 @@ public:
 	void Update(double t);
 
 	void setTarget(PxRigidDynamic* t) { target = t; }
+	void toggle() { enabled = !enabled; }
 };
 

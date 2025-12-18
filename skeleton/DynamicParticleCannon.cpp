@@ -30,12 +30,12 @@ void DynamicParticleCannon::Update(double t) {
 	timer += t;
 	if (timer >= SHOOT_RATE) {
 		timer = 0;
-		Shoot();
+		if(enabled) Shoot();
 	}
 }
 
 void DynamicParticleCannon::Shoot() {
-	auto part = new DynamicParticle(gPhysics, gScene, pos, 0.1f, 1);
+	auto part = new DynamicParticle(gPhysics, gScene, pos, 1.0f, 1);
 	part->addForce(rDirection * CANNON_FORCE);
 	particles.push(part);
 }

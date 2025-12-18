@@ -3,12 +3,15 @@
 #include "WindGenerator.h"
 #include "ParticleGen.h"
 #include "UniformGeneration.h"
+#include "GaussianGeneration.h"
 #include "GravityGenerator.h"
 #include "ParticleSystem.h"
+#include "DynamicParticleSystem.h"
 #include "RigidCube.h"
 #include "DynamicParticle.h"
 #include "DynamicParticleCannon.h"
 #include "Water.h"
+#include "Explosion.h"
 
 void SpringScene::init() {
 	Particle* p = new Particle();
@@ -28,13 +31,14 @@ void SpringScene::init() {
     water = new Water(Vector3(0, 0, 100), Vector3(50, 20, 50));
     water->addTarget(diego->getPelvis());
 
-    DynamicParticleCannon* cannon = new DynamicParticleCannon(Vector3(0, 5, 15), gPhysics, gScene);
-    cannon->setTarget(diego->getHead());
-    cannons.push_back(cannon);
+    m_cannon = new DynamicParticleCannon(Vector3(0, 5, 15), gPhysics, gScene);
+    m_cannon->toggle();
+    cannons.push_back(m_cannon);
 
     DynamicParticle* particle = new DynamicParticle(gPhysics, gScene, Vector3(0, 5, 0));
 
     setupCynder();
+    setupBallPool();
     setupEnemies();
 }
 
@@ -54,9 +58,21 @@ void SpringScene::setupEnemies() {
     }
 }
 
+void SpringScene::setupBallPool() {
+    std::vector<ParticleGen*> gens;
+    gens.push_back(new UniformGeneration({ 0,0,0 }, 2, 1, 0, 3));
+    std::vector<ForceGenerator*> forces;
+    wind2 = new WindGenerator({ 0,0,0 }, { 1000,1000,1000 }, { 0,1000,0 });
+    explosion = new Explosion(Vector3(0, 0, 0), 50, 0.1, 1000);
+    explosion->Disable();
+    forces.push_back(explosion);
+    forces.push_back(wind2);
+    ball_pool = new DynamicParticleSystem(Vector3(0, 10, -25), gens, forces, gPhysics, gScene);
+}
+
 void SpringScene::setupCynder() {
     std::vector<ParticleGen*> gens;
-    gens.push_back(new UniformGeneration({ 0,0,0 }, { 0,0,0 }, 2, 1, 0, 200));
+    gens.push_back(new UniformGeneration({ 0,0,0 }, 2, 1, 0, 200));
     std::vector<ForceGenerator*> forces;
     forces.push_back(new GravityGenerator({ 0,0,0 }, 0.3));
     wind = new WindGenerator({ 0,0,0 }, { 1000,1000,1000 }, { 400,50,5 });
@@ -64,10 +80,34 @@ void SpringScene::setupCynder() {
     cynder = new ParticleSystem({ 0,0,0 }, gens, forces);
 }
 
+PxRigidDynamic* SpringScene::getNearestEnemy() {
+    PxRigidDynamic* closest = nullptr;
+    float minDistSqr = FLT_MAX;
+
+    PxVec3 myPos = diego->getChest()->getGlobalPose().p;
+
+    for (auto& enemy : enemies) {
+        if (!enemy) continue;
+
+        PxVec3 ePos = enemy->getDiego()->getChest()->getGlobalPose().p;
+        float distSqr = (ePos - myPos).magnitudeSquared();
+
+        if (distSqr < minDistSqr) {
+            minDistSqr = distSqr;
+            closest = enemy->getDiego()->getChest();
+        }
+    }
+
+    return closest;
+}
+
+
 void SpringScene::integrate(double t) {
 	//mSpring->integrate(t);x
 
     cynder->Update(t);
+    ball_pool->Update(t);
+
 	diego->integrate(t);
     water->integrate(t);
 
@@ -79,6 +119,8 @@ void SpringScene::integrate(double t) {
         diego->integrate(t);
     }
 
+    m_cannon->setTarget(getNearestEnemy());
+    m_cannon->SetPosition(diego->getPos() + Vector3(0, 5, 0));
     updateCamera();
 }
 
@@ -129,8 +171,13 @@ void SpringScene::keyPress(unsigned char key, const physx::PxTransform& camera) 
     else if (key == 'j')
         cameraYaw += cameraRotateSpeed;
     else if (key == 'k')
-    {
-    }
+        explosion->Enable();
+    else if (key == 'i')
+        wind2->Toggle();
+    else if (key == 'v')
+        diego->toggle_play_dead();
+    else if (key == 'c')
+        m_cannon->toggle();
 }
 
 SpringScene::~SpringScene() {

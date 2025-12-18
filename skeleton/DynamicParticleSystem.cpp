@@ -16,11 +16,12 @@ DynamicParticleSystem::Update(double t) {
 		}
 		else {
 			particles.push_back(aux);
+			aux->Update(t);
 		}
 	}
 
 	for (auto generator : particle_generators) {
-		std::vector<DynamicParticle*> new_particles = generator->GenerateDP();
+		std::vector<DynamicParticle*> new_particles = generator->GenerateDP(gPhysics, gScene);
 		generator->setPosition(pos);
 		particles.insert(particles.end(), new_particles.begin(), new_particles.end());
 	}

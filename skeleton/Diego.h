@@ -11,15 +11,17 @@ class Diego
 {
 private:
 
-    const float BREAK_FORCE_HEAD = 20000.0f;
-    const float BREAK_FORCE_SPINE = 80000.0f;
+    const float BREAK_FORCE_HEAD = 30000.0f;
+    const float BREAK_FORCE_SPINE = 30000.0f;
     const float BREAK_FORCE_ARM = 30000.0f;
-    const float BREAK_FORCE_LEG = 40000.0f;
-    const float BREAK_TORQUE = 50000;
+    const float BREAK_FORCE_LEG = 30000.0f;
+    const float BREAK_TORQUE = 30000;
 
     float move_force = 1000.0f;
     float max_speed = 40.0f;
     const float JUMP_FORCE = 100.0f;
+
+    bool play_dead = false;
 
     //Rb an TR
     PxTransform* head_tr = nullptr;
@@ -90,7 +92,7 @@ private:
     //Other
     PxScene* scene = nullptr;
 public:
-    Diego(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos, Vector4 color = {1,1,1,1}, float move_force = 1000.0f);
+    Diego(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos, Vector4 color = {1,1,1,1}, float move_force = 1000.0f, float break_factor = 1.0f);
     ~Diego();
 
     inline PxRigidDynamic* getChest() const { return chest_rb; }
@@ -114,4 +116,5 @@ public:
     void stop();
 
     void kill();
+    void toggle_play_dead() { play_dead = !play_dead; }
 };

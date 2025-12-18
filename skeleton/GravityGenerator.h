@@ -9,5 +9,6 @@ public:
 	GravityGenerator(Vector3 pos, double gravity_force) : ForceGenerator(pos), _gravity_force(gravity_force) {}
 	~GravityGenerator() {}
 	void ApplyForce(const std::list<Particle*>& particles, double t) override;
+	void ApplyForce(const std::list<DynamicParticle*>& particles, double t) override {}
 };
 

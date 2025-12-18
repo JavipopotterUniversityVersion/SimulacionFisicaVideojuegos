@@ -1,5 +1,6 @@
 #include "WindGenerator.h"
 #include "Particle.h"
+#include "DynamicParticle.h"
 
 void WindGenerator::ApplyForce(const std::list<Particle*>& particles, double t) {
     if (!enabled) return;
@@ -11,6 +12,18 @@ void WindGenerator::ApplyForce(const std::list<Particle*>& particles, double t) 
         }
 	}
 }
+
+void WindGenerator::ApplyForce(const std::list<DynamicParticle*>& particles, double t) {
+    if (!enabled) return;
+    for (auto particle : particles) {
+        if (IsPointInsideVolume(particle->getPos())) {
+            Vector3 diff = wind_velocity - particle->getVelocity();
+            Vector3 forceToAdd = k1 * diff + k2 * abs(diff.magnitude()) * diff;
+            particle->addForce(forceToAdd * t);
+        }
+    }
+}
+
 
 bool WindGenerator::IsPointInsideVolume(const Vector3& posToCheck) {
     Vector3 half(volume.x / 2.0f, volume.y / 2.0f, volume.z / 2.0f);

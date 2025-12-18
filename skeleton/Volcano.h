@@ -37,7 +37,7 @@ public:
 
 			//METEOR GENERATOR
 			std::vector<ParticleGen*> particle_generators;
-			GaussianGeneration* gauss = new GaussianGeneration(pos, { 1,1,1 }, 0.4, 100, 0);
+			GaussianGeneration* gauss = new GaussianGeneration(pos, 0.4, 100, 0);
 			particle_generators.push_back(gauss);
 			gauss->setGradients(Vector4(1, 0, 0, 1), Vector4(1, 1, 0, 1));
 

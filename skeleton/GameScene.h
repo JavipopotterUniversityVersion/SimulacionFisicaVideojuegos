@@ -20,6 +20,7 @@ protected:
 	Gun* mGun = nullptr;
 	Player* player;
 	Volcano* volcano;
+
 	ParticleSystem* cynder;
 	WindGenerator* wind;
 

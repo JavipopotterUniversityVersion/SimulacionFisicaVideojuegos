@@ -19,7 +19,7 @@ std::vector<Particle*> GaussianGeneration::GenerateP() {
 	return particles;
 }
 
-std::vector<DynamicParticle*> GaussianGeneration::GenerateDP() {
+std::vector<DynamicParticle*> GaussianGeneration::GenerateDP(PxPhysics* gPhysics, PxScene* gScene) {
 	if (!enabled) return std::vector<DynamicParticle*>();
 
 	std::vector<DynamicParticle*> particles;
@@ -31,7 +31,9 @@ std::vector<DynamicParticle*> GaussianGeneration::GenerateDP() {
 		float t = 0.5f * (_d(_mt) + 1.0f);
 		Vector4 color = gradient_start * (1.0f - t) + gradient_end * t;
 
-		particles.push_back(new DynamicParticle());
+		auto new_particle = new DynamicParticle(gPhysics, gScene, position);
+		particles.push_back(new_particle);
+		new_particle->addForce(direction * speed);
 	}
 	return particles;
 }

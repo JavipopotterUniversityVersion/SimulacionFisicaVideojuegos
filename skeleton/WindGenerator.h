@@ -15,5 +15,6 @@ public:
 		ForceGenerator(pos), volume(volume), wind_velocity(wind_velocity), k1(k1), k2(k2) {}
 	~WindGenerator() {}
 	void ApplyForce(const std::list<Particle*>& particles, double t) override;
+	void ApplyForce(const std::list<DynamicParticle*>& particles, double t) override;
 };
 
