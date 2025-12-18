@@ -1,6 +1,17 @@
 #include "DynamicParticleCannon.h"
 #include <iostream>
 #include <random>
+#include <ctime>
+
+static float randomRange(float min, float max) {
+	static std::mt19937 rng(static_cast<unsigned int>(time(nullptr)));
+	std::uniform_real_distribution<float> dist(min, max);
+	return dist(rng);
+}
+
+static float lerp(float a, float b, float t) {
+	return (1.0f - t) * a + t * b;
+}
 
 void DynamicParticleCannon::Update(double t) {
 	int size = particles.size();
@@ -35,7 +46,9 @@ void DynamicParticleCannon::Update(double t) {
 }
 
 void DynamicParticleCannon::Shoot() {
-	auto part = new DynamicParticle(gPhysics, gScene, pos, 1.0f, 1);
+	float mass = randomRange(PARTICLE_MASS_MIN, PARTICLE_MASS_MAX);
+	float radius = lerp(0.3f, 1.0f, mass / PARTICLE_MASS_MAX);
+	auto part = new DynamicParticle(gPhysics, gScene, pos, 1.0f, 1, radius, Vector4(0,0,1,1));
 	part->addForce(rDirection * CANNON_FORCE);
 	particles.push(part);
 }

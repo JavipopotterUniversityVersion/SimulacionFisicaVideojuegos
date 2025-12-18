@@ -43,7 +43,7 @@ void SpringScene::init() {
 }
 
 void SpringScene::setupEnemies() {
-    const int numEnemies = 8;
+    const int numEnemies = 30;
     const float radius = 100.0f;
     const float height = 20.0f;
 
@@ -52,15 +52,15 @@ void SpringScene::setupEnemies() {
         float x = radius * cos(angle);
         float z = radius * sin(angle);
         Marco* enemy = new Marco(gPhysics, gScene, Vector3(x, height, z), Vector4(1,0,0,1));
-        enemy->setTarget(diego->getChest());
+        enemy->setTarget(diego->getHead());
         enemies.push_back(enemy);
-        water->addTarget(enemy->getDiego()->getPelvis());
+        water->addTarget(enemy->getDiego()->getHead());
     }
 }
 
 void SpringScene::setupBallPool() {
     std::vector<ParticleGen*> gens;
-    gens.push_back(new UniformGeneration({ 0,0,0 }, 2, 1, 0, 3));
+    gens.push_back(new GaussianGeneration(Vector3(0,0,0), 1.0f, 1, 0));
     std::vector<ForceGenerator*> forces;
     wind2 = new WindGenerator({ 0,0,0 }, { 1000,1000,1000 }, { 0,1000,0 });
     explosion = new Explosion(Vector3(0, 0, 0), 50, 0.1, 1000);
@@ -72,11 +72,11 @@ void SpringScene::setupBallPool() {
 
 void SpringScene::setupCynder() {
     std::vector<ParticleGen*> gens;
-    gens.push_back(new UniformGeneration({ 0,0,0 }, 2, 1, 0, 200));
+    gens.push_back(new UniformGeneration({ 0,0,0 }, 2, 10, 0, 200));
     std::vector<ForceGenerator*> forces;
-    forces.push_back(new GravityGenerator({ 0,0,0 }, 0.3));
-    wind = new WindGenerator({ 0,0,0 }, { 1000,1000,1000 }, { 400,50,5 });
-    forces.push_back(wind);
+    //forces.push_back(new GravityGenerator({ 0,0,0 }, 0.3));
+    //wind = new WindGenerator({ 0,0,0 }, { 1000,1000,1000 }, { 400,50,5 });
+    //forces.push_back(wind);
     cynder = new ParticleSystem({ 0,0,0 }, gens, forces);
 }
 
@@ -104,8 +104,10 @@ PxRigidDynamic* SpringScene::getNearestEnemy() {
 
 void SpringScene::integrate(double t) {
 	//mSpring->integrate(t);x
+    m_cannon->setTarget(getNearestEnemy());
 
     cynder->Update(t);
+    cynder->SetPosition(diego->getPos() - Vector3(100,0,100));
     ball_pool->Update(t);
 
 	diego->integrate(t);
@@ -119,8 +121,8 @@ void SpringScene::integrate(double t) {
         diego->integrate(t);
     }
 
-    m_cannon->setTarget(getNearestEnemy());
     m_cannon->SetPosition(diego->getPos() + Vector3(0, 5, 0));
+    //cynder->SetPosition(diego->getPos());
     updateCamera();
 }
 

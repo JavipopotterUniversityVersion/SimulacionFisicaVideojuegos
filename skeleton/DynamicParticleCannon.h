@@ -4,7 +4,10 @@
 
 class DynamicParticleCannon
 {
-	const float CANNON_FORCE = 20000.0f;
+	float PARTICLE_MASS_MIN = 1.0f;
+	float PARTICLE_MASS_MAX = 3.0f;
+
+	const float CANNON_FORCE = 4000.0f;
 	Vector3 pos;
 	Vector3 rDirection;
 
@@ -15,7 +18,7 @@ class DynamicParticleCannon
 	PxRigidDynamic* target;
 
 	float timer = 0;
-	const float SHOOT_RATE = 0.8f;
+	const float SHOOT_RATE = 0.2f;
 	bool enabled = true;
 public:
 	DynamicParticleCannon(Vector3 P, PxPhysics* gPhysics, PxScene* gScene) : pos(P), gScene(gScene), gPhysics(gPhysics) {

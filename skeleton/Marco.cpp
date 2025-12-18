@@ -29,7 +29,7 @@ void Marco::integrate(float t) {
 }
 
 Marco::Marco(PxPhysics* gPhysics, PxScene* gScene, Vector3 pos, Vector4 color, float move_force) {
-	diego = new Diego(gPhysics, gScene, pos, color, move_force, 0.2f);
+	diego = new Diego(gPhysics, gScene, pos, color, move_force, 0.15f);
 	diego->setMaxSpeed(5.0f);
 	target_time = randomRange(1,3);
 }
