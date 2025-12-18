@@ -130,16 +130,25 @@ void SpringScene::keyPress(unsigned char key, const physx::PxTransform& camera) 
         cameraYaw += cameraRotateSpeed;
     else if (key == 'k')
     {
-        Vector3 offset = Vector3(0, 5, 0);
-        DynamicParticle* pt = new DynamicParticle(gPhysics, gScene, diego->getPos() + offset - forward * 5, 5.0f, 10, 1, Vector4(0, 0, 0, 1), "cube");
     }
 }
 
 SpringScene::~SpringScene() {
 	delete diego;
     delete floor;
+    delete water;
+    delete cynder;
+    delete wind;
 
     for (auto cube : cubes) {
         delete cube;
+    }
+
+    for (auto marco : enemies) {
+        delete marco;
+    }
+
+    for (auto canon : cannons) {
+        delete canon;
     }
 }
